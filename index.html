@@ -115,63 +115,58 @@
     </div>
 
     <script>
-      // Ждем полной загрузки страницы
-      window.onload = function() {
-          const tg = window.Telegram?.WebApp;
-          
-          if (tg) {
-              tg.expand();
-              // Автозаполнение имени (ИСПРАВЛЕНО: Добавлен оператор ||)
-              if (tg.initDataUnsafe?.user) {
-                  document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
-              }
+      // 1. Сразу инициализируем объект
+      const tg = window.Telegram.WebApp;
+      
+      // 2. Сообщаем Telegram, что приложение готово
+      tg.ready();
+      tg.expand();
+
+      // 3. Пытаемся заполнить имя сразу (ИСПРАВЛЕНО: добавлен оператор ||)
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+          document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
+      }
+
+      document.getElementById('main-button').addEventListener('click', function() {
+          const name = document.getElementById('name').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+
+          // Проверка заполнения полей
+          if (!name || !phone) {
+              tg.showAlert("Пожалуйста, заполните имя и номер телефона");
+              return;
           }
 
-          document.getElementById('main-button').addEventListener('click', () => {
-              const name = document.getElementById('name').value.trim();
-              const phone = document.getElementById('phone').value.trim();
+          // 4. Проверяем наличие пользователя перед отправкой (ИСПРАВЛЕНО: добавлен оператор ||)
+          const userId = tg.initDataUnsafe?.user?.id || "ID_НЕ_НАЙДЕН";
+          
+          const data = {
+              id: userId,
+              name: name,
+              phone: phone
+          };
 
-              if (!name || !phone) {
-                  if (tg) tg.showAlert("Заполните имя и номер телефона!");
-                  else alert("Заполните имя и номер телефона!");
-                  return;
+          // Ваш реальный Production вебхук n8n
+          const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
+
+          fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+          })
+          .then(response => {
+              if (response.ok) {
+                  tg.showAlert("Запись отправлена! Ваш ID: " + userId);
+                  tg.close();
+              } else {
+                  tg.showAlert("Ошибка сервера n8n. Статус: " + response.status);
               }
-
-              // Собираем данные (ИСПРАВЛЕНО: Добавлен оператор ||)
-              const data = {
-                  id: tg?.initDataUnsafe?.user?.id || "web_test",
-                  name: name,
-                  phone: phone
-              };
-
-              // ИСПРАВЛЕНО: Ваш реальный тестовый вебхук n8n
-              const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
-
-              fetch(webhookUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(data)
-              })
-              .then(response => {
-                  if (response.ok) {
-                      if (tg) {
-                          tg.showAlert("Запись успешно отправлена!");
-                          tg.close();
-                      } else {
-                          alert("Запись успешно отправлена!");
-                      }
-                  } else {
-                      if (tg) tg.showAlert("Ошибка сервера n8n: " + response.status);
-                      else alert("Ошибка сервера n8n: " + response.status);
-                  }
-              })
-              .catch((error) => {
-                  console.error(error);
-                  if (tg) tg.showAlert("Ошибка соединения");
-                  else alert("Ошибка соединения");
-              });
+          })
+          .catch((error) => {
+              console.error(error);
+              tg.showAlert("Ошибка соединения с n8n");
           });
-      };
+      });
     </script>
   </body>
 </html>
