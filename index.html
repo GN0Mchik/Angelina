@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini App</title>
+    <!-- Подключаем скрипт Telegram -->
+    <script src="https://telegram.org"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: var(--tg-theme-bg-color);
+        color: var(--tg-theme-text-color);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      input {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 12px;
+        background-color: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Оставить заявку</h3>
+    <input type="text" id="name" placeholder="Ваше имя" />
+    <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" />
+    <button id="send">Отправить данные</button>
+
+    <script>
+      const tg = window.Telegram.WebApp;
+      tg.expand(); // Развернуть на всё окно
+
+      // Автозаполнение имени из Telegram
+      document.getElementById("name").value =
+        tg.initDataUnsafe.user?.first_name || "";
+
+      document.getElementById("send").addEventListener("click", () => {
+        const data = {
+          id: tg.initDataUnsafe.user?.id,
+          name: document.getElementById("name").value,
+          phone: document.getElementById("phone").value,
+        };
+
+        // ЗАМЕНИТЕ ЭТУ ССЫЛКУ на ваш Production Webhook URL из n8n
+        const webhookUrl = "https://n8n.cloud";
+
+        fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then(() => {
+            tg.showAlert("Данные успешно отправлены!");
+            tg.close(); // Закрыть мини-апп
+          })
+          .catch((err) => {
+            tg.showAlert("Ошибка при отправке");
+          });
+      });
+    </script>
+  </body>
+</html>
