@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lash Studio Booking</title>
+    <!-- ИСПРАВЛЕНО: Правильный скрипт Telegram WebApp -->
     <script src="https://telegram.org"></script>
     <style>
       :root {
@@ -23,9 +24,8 @@
         min-height: 100vh;
         background:
           linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-          url("https://unsplash.com");
+          url("https://unsplash.com") no-repeat center center;
         background-size: cover;
-        background-position: center;
       }
 
       .card {
@@ -121,7 +121,8 @@
       // Автоподстановка имени
       try {
           if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-              document.getElementById('name').value = tg.initDataUnsafe.user.first_name  '';
+              // ИСПРАВЛЕНО: Добавлен оператор ||
+              document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
           }
       } catch (e) {
           console.error("Ошибка получения данных ТГ", e);
@@ -131,14 +132,10 @@
           const name = document.getElementById('name').value;
           const phone = document.getElementById('phone').value;
 
-          // if (!phone) {
-          //     tg.showAlert("Введите номер телефона");
-          //     return;
-          // }
-
           // Собираем данные
           const data = {
-              id: tg.initDataUnsafe?.user?.id  "unknown",
+              // ИСПРАВЛЕНО: Добавлен оператор ||
+              id: tg.initDataUnsafe?.user?.id || "unknown",
               name: name,
               phone: phone
           };
