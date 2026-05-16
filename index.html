@@ -8,12 +8,8 @@
     <style>
       :root {
         --bg-color: #faf3f3;
-        --accent-color: #d4a373; /* Благородное золото/беж */
-        --button-grad: linear-gradient(
-          135deg,
-          #e195ab,
-          #cc6a87
-        ); /* Пудрово-розовый */
+        --accent-color: #d4a373;
+        --button-grad: linear-gradient(135deg, #e195ab, #cc6a87);
         --text-color: #4a4a4a;
       }
 
@@ -25,7 +21,6 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        /* Стильный фон: качественное фото ресниц с легким затемнением */
         background:
           linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
           url("https://unsplash.com");
@@ -35,7 +30,7 @@
 
       .card {
         background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(10px); /* Эффект матового стекла */
+        backdrop-filter: blur(10px);
         padding: 40px 30px;
         border-radius: 30px;
         width: 85%;
@@ -79,11 +74,6 @@
         transition: all 0.3s ease;
       }
 
-      input:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 10px rgba(212, 163, 115, 0.1);
-      }
-
       button {
         width: 100%;
         padding: 16px;
@@ -93,23 +83,16 @@
         border-radius: 15px;
         font-size: 16px;
         font-weight: 600;
-        letter-spacing: 1px;
         cursor: pointer;
         box-shadow: 0 10px 20px rgba(225, 149, 171, 0.3);
         transition: all 0.3s ease;
         margin-top: 10px;
       }
 
-      button:active {
-        transform: scale(0.96);
-        box-shadow: 0 5px 10px rgba(225, 149, 171, 0.2);
-      }
-
       .footer-text {
         font-size: 11px;
         color: #aaa;
         margin-top: 25px;
-        letter-spacing: 1px;
       }
     </style>
   </head>
@@ -134,9 +117,14 @@
     <script>
       const tg = window.Telegram.WebApp;
       tg.expand();
+
       // Автоподстановка имени
-      if (tg.initDataUnsafe?.user) {
-          document.getElementById('name').value = tg.initDataUnsafe.user.first_name  '';
+      try {
+          if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+              document.getElementById('name').value = tg.initDataUnsafe.user.first_name  '';
+          }
+      } catch (e) {
+          console.error("Ошибка получения данных ТГ", e);
       }
 
       document.getElementById('main-button').addEventListener('click', () => {
@@ -148,26 +136,33 @@
               return;
           }
 
+          // Собираем данные
           const data = {
               id: tg.initDataUnsafe?.user?.id  "unknown",
               name: name,
               phone: phone
           };
 
-          // ЗАМЕНИТЕ ЭТУ ССЫЛКУ на ваш Production Webhook URL
-          const webhookUrl = 'https://n8n.cloud';
-
+          // URL вашего вебхука n8n
+          const webhookUrl = 'https://n8n.cloudhttps://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
           fetch(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data)
           })
-          .then(() => {
-              tg.showConfirm("Запись отправлена! Закрыть окно?", (ok) => {
-                  if (ok) tg.close();
-              });
+          .then(response => {
+              if (response.ok) {
+                  tg.showConfirm("Запись успешно отправлена! Закрыть приложение?", (ok) => {
+                      if (ok) tg.close();
+                  });
+              } else {
+                  tg.showAlert("Ошибка сервера. Попробуйте позже.");
+              }
           })
-          .catch(() => tg.showAlert("Ошибка соединения"));
+          .catch((error) => {
+              console.error('Error:', error);
+              tg.showAlert("Ошибка соединения с n8n");
+          });
       });
     </script>
   </body>
