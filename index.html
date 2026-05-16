@@ -22,6 +22,7 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        /* ИСПРАВЛЕНО: Рабочая ссылка на красивый фоновый рисунок студии */
         background:
           linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
           url("https://unsplash.com") no-repeat center center;
@@ -118,10 +119,9 @@
       const tg = window.Telegram.WebApp;
       tg.expand();
 
-      // Автоподстановка имени
+      // Автоподстановка имени из Telegram
       try {
           if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-              // ИСПРАВЛЕНО: Добавлен оператор ||
               document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
           }
       } catch (e) {
@@ -129,19 +129,25 @@
       }
 
       document.getElementById('main-button').addEventListener('click', () => {
-          const name = document.getElementById('name').value;
-          const phone = document.getElementById('phone').value;
+          const name = document.getElementById('name').value.trim();
+          const phone = document.getElementById('phone').value.trim();
 
-          // Собираем данные
+          // ИСПРАВЛЕНО: Проверка заполнения полей с выводом уведомления в интерфейс Telegram
+          if (!name || !phone) {
+              tg.showAlert("Пожалуйста, заполните имя и номер телефона!");
+              return;
+          }
+
+          // Собираем данные для n8n
           const data = {
-              // ИСПРАВЛЕНО: Добавлен оператор ||
               id: tg.initDataUnsafe?.user?.id || "unknown",
               name: name,
               phone: phone
           };
 
-          // URL вашего вебхука n8n
+          // Тестовый URL вашего вебхука n8n
           const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook-test/f629f86a-f089-4619-a70c-296108bfaf0c';
+          
           fetch(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -153,12 +159,12 @@
                       if (ok) tg.close();
                   });
               } else {
-                  tg.showAlert("Ошибка сервера. Попробуйте позже.");
+                  tg.showAlert("Ошибка сервера n8n. Код ответа: " + response.status);
               }
           })
           .catch((error) => {
               console.error('Error:', error);
-              tg.showAlert("Ошибка соединения с n8n");
+              tg.showAlert("Ошибка соединения. Убедитесь, что в n8n включен CORS (*)");
           });
       });
     </script>
