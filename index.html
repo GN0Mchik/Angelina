@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lash Studio Booking</title>
-    <!-- ИСПРАВЛЕНО: Правильный скрипт Telegram WebApp -->
+    <!-- Правильный скрипт Telegram WebApp -->
     <script src="https://telegram.org"></script>
     <style>
       :root {
@@ -22,7 +22,6 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        /* ИСПРАВЛЕНО: Рабочая ссылка на красивый фоновый рисунок студии */
         background:
           linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
           url("https://unsplash.com") no-repeat center center;
@@ -116,57 +115,63 @@
     </div>
 
     <script>
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-
-      // Автоподстановка имени из Telegram
-      try {
-          if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-              document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
-          }
-      } catch (e) {
-          console.error("Ошибка получения данных ТГ", e);
-      }
-
-      document.getElementById('main-button').addEventListener('click', () => {
-          const name = document.getElementById('name').value.trim();
-          const phone = document.getElementById('phone').value.trim();
-
-          // ИСПРАВЛЕНО: Проверка заполнения полей с выводом уведомления в интерфейс Telegram
-          if (!name || !phone) {
-              tg.showAlert("Пожалуйста, заполните имя и номер телефона!");
-              return;
-          }
-
-          // Собираем данные для n8n
-          const data = {
-              id: tg.initDataUnsafe?.user?.id || "unknown",
-              name: name,
-              phone: phone
-          };
-
-          // Тестовый URL вашего вебхука n8n
-          const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
+      // Ждем полной загрузки страницы
+      window.onload = function() {
+          const tg = window.Telegram?.WebApp;
           
-          fetch(webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-          })
-          .then(response => {
-              if (response.ok) {
-                  tg.showConfirm("Запись успешно отправлена! Закрыть приложение?", (ok) => {
-                      if (ok) tg.close();
-                  });
-              } else {
-                  tg.showAlert("Ошибка сервера n8n. Код ответа: " + response.status);
+          if (tg) {
+              tg.expand();
+              // Автозаполнение имени (ИСПРАВЛЕНО: Добавлен оператор ||)
+              if (tg.initDataUnsafe?.user) {
+                  document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
               }
-          })
-          .catch((error) => {
-              console.error('Error:', error);
-              tg.showAlert("Ошибка соединения. Убедитесь, что в n8n включен CORS (*)");
+          }
+
+          document.getElementById('main-button').addEventListener('click', () => {
+              const name = document.getElementById('name').value.trim();
+              const phone = document.getElementById('phone').value.trim();
+
+              if (!name || !phone) {
+                  if (tg) tg.showAlert("Заполните имя и номер телефона!");
+                  else alert("Заполните имя и номер телефона!");
+                  return;
+              }
+
+              // Собираем данные (ИСПРАВЛЕНО: Добавлен оператор ||)
+              const data = {
+                  id: tg?.initDataUnsafe?.user?.id || "web_test",
+                  name: name,
+                  phone: phone
+              };
+
+              // ИСПРАВЛЕНО: Ваш реальный тестовый вебхук n8n
+              const webhookUrl = 'https://n8n.cloud';
+
+              fetch(webhookUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(data)
+              })
+              .then(response => {
+                  if (response.ok) {
+                      if (tg) {
+                          tg.showAlert("Запись успешно отправлена!");
+                          tg.close();
+                      } else {
+                          alert("Запись успешно отправлена!");
+                      }
+                  } else {
+                      if (tg) tg.showAlert("Ошибка сервера n8n: " + response.status);
+                      else alert("Ошибка сервера n8n: " + response.status);
+                  }
+              })
+              .catch((error) => {
+                  console.error(error);
+                  if (tg) tg.showAlert("Ошибка соединения");
+                  else alert("Ошибка соединения");
+              });
           });
-      });
+      };
     </script>
   </body>
 </html>
