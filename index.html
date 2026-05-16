@@ -3,73 +3,171 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mini App</title>
-    <!-- Подключаем скрипт Telegram -->
+    <title>Lash Studio Booking</title>
     <script src="https://telegram.org"></script>
     <style>
+      :root {
+        --bg-color: #faf3f3;
+        --accent-color: #d4a373; /* Благородное золото/беж */
+        --button-grad: linear-gradient(
+          135deg,
+          #e195ab,
+          #cc6a87
+        ); /* Пудрово-розовый */
+        --text-color: #4a4a4a;
+      }
+
       body {
-        font-family: sans-serif;
-        background-color: var(--tg-theme-bg-color);
-        color: var(--tg-theme-text-color);
-        padding: 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        /* Стильный фон: качественное фото ресниц с легким затемнением */
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+          url("https://unsplash.com");
+        background-size: cover;
+        background-position: center;
       }
+
+      .card {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px); /* Эффект матового стекла */
+        padding: 40px 30px;
+        border-radius: 30px;
+        width: 85%;
+        max-width: 340px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 300;
+        color: var(--text-color);
+        margin-bottom: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: var(--accent-color);
+        margin-bottom: 30px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .input-box {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
       input {
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
         width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        font-size: 16px;
         box-sizing: border-box;
+        outline: none;
+        background: #fff;
+        color: var(--text-color);
+        transition: all 0.3s ease;
       }
+
+      input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 10px rgba(212, 163, 115, 0.1);
+      }
+
       button {
-        padding: 12px;
-        background-color: var(--tg-theme-button-color);
-        color: var(--tg-theme-button-text-color);
+        width: 100%;
+        padding: 16px;
+        background: var(--button-grad);
+        color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 1px;
         cursor: pointer;
-        font-weight: bold;
+        box-shadow: 0 10px 20px rgba(225, 149, 171, 0.3);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      button:active {
+        transform: scale(0.96);
+        box-shadow: 0 5px 10px rgba(225, 149, 171, 0.2);
+      }
+
+      .footer-text {
+        font-size: 11px;
+        color: #aaa;
+        margin-top: 25px;
+        letter-spacing: 1px;
       }
     </style>
   </head>
   <body>
-    <h3>Оставить заявку</h3>
-    <input type="text" id="name" placeholder="Ваше имя" />
-    <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" />
-    <button id="send">Отправить данные</button>
+    <div class="card">
+      <div class="logo">LASHES</div>
+      <div class="subtitle">Studio & Beauty</div>
+
+      <div class="input-box">
+        <input type="text" id="name" placeholder="Имя клиента" />
+      </div>
+
+      <div class="input-box">
+        <input type="tel" id="phone" placeholder="+7 (___) ___--" />
+      </div>
+
+      <button id="main-button">ЗАПИСАТЬСЯ</button>
+
+      <div class="footer-text">Perfect lashes every time</div>
+    </div>
 
     <script>
       const tg = window.Telegram.WebApp;
-      tg.expand(); // Развернуть на всё окно
+      tg.expand();
+      // Автоподстановка имени
+      if (tg.initDataUnsafe?.user) {
+          document.getElementById('name').value = tg.initDataUnsafe.user.first_name  '';
+      }
 
-      // Автозаполнение имени из Telegram
-      document.getElementById("name").value =
-        tg.initDataUnsafe.user?.first_name || "";
+      document.getElementById('main-button').addEventListener('click', () => {
+          const name = document.getElementById('name').value;
+          const phone = document.getElementById('phone').value;
 
-      document.getElementById("send").addEventListener("click", () => {
-        const data = {
-          id: tg.initDataUnsafe.user?.id,
-          name: document.getElementById("name").value,
-          phone: document.getElementById("phone").value,
-        };
+          if (!phone) {
+              tg.showAlert("Введите номер телефона");
+              return;
+          }
 
-        // ЗАМЕНИТЕ ЭТУ ССЫЛКУ на ваш Production Webhook URL из n8n
-        const webhookUrl = "https://n8n.cloud";
+          const data = {
+              id: tg.initDataUnsafe?.user?.id  "unknown",
+              name: name,
+              phone: phone
+          };
 
-        fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        })
-          .then(() => {
-            tg.showAlert("Данные успешно отправлены!");
-            tg.close(); // Закрыть мини-апп
+          // ЗАМЕНИТЕ ЭТУ ССЫЛКУ на ваш Production Webhook URL
+          const webhookUrl = 'https://n8n.cloud';
+
+          fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
           })
-          .catch((err) => {
-            tg.showAlert("Ошибка при отправке");
-          });
+          .then(() => {
+              tg.showConfirm("Запись отправлена! Закрыть окно?", (ok) => {
+                  if (ok) tg.close();
+              });
+          })
+          .catch(() => tg.showAlert("Ошибка соединения"));
       });
     </script>
   </body>
