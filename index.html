@@ -4,171 +4,252 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lash Studio Booking</title>
-    <!-- ИСПРАВЛЕНО РАЗ И НАВСЕГДА: Правильный скрипт Telegram WebApp -->
-    <script src="https://telegram.org"></script>
+
+    <!-- ✅ ПРАВИЛЬНЫЙ скрипт Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
       :root {
-        --bg-color: #faf3f3;
-        --accent-color: #d4a373;
-        --button-grad: linear-gradient(135deg, #e195ab, #cc6a87);
-        --text-color: #4a4a4a;
+        --bg: #1a1015;
+        --card: rgba(255,255,255,0.04);
+        --accent: #e8a0b4;
+        --accent2: #c97a94;
+        --text: #f5ede8;
+        --muted: #a08890;
+        --border: rgba(232,160,180,0.18);
+        --grad: linear-gradient(135deg, #e195ab, #c06080);
       }
 
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        font-family: 'Jost', sans-serif;
+        background: var(--bg);
         min-height: 100vh;
-        background:
-          linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-          url("https://unsplash.com") no-repeat center center;
-        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-image:
+          radial-gradient(ellipse 60% 50% at 80% 20%, rgba(200,100,130,0.15) 0%, transparent 60%),
+          radial-gradient(ellipse 50% 40% at 10% 80%, rgba(150,80,110,0.1) 0%, transparent 60%);
       }
 
       .card {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(10px);
-        padding: 40px 30px;
-        border-radius: 30px;
-        width: 85%;
-        max-width: 340px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        text-align: center;
+        width: 100%;
+        max-width: 360px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: 44px 32px 36px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
       }
 
       .logo {
-        font-size: 28px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 34px;
         font-weight: 300;
-        color: var(--text-color);
-        margin-bottom: 10px;
-        letter-spacing: 4px;
+        color: var(--text);
+        letter-spacing: 8px;
         text-transform: uppercase;
+        margin-bottom: 6px;
       }
 
       .subtitle {
-        font-size: 13px;
-        color: var(--accent-color);
-        margin-bottom: 30px;
-        letter-spacing: 2px;
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 3px;
         text-transform: uppercase;
+        font-weight: 300;
+        margin-bottom: 40px;
       }
 
-      .input-box {
-        position: relative;
-        margin-bottom: 20px;
+      .divider {
+        width: 40px;
+        height: 1px;
+        background: var(--accent);
+        opacity: 0.4;
+        margin: 0 auto 40px;
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+        font-weight: 400;
       }
 
       input {
         width: 100%;
-        padding: 14px 15px;
-        border: 1px solid #eee;
+        padding: 14px 16px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
         border-radius: 12px;
-        font-size: 16px;
-        box-sizing: border-box;
+        font-size: 15px;
+        font-family: 'Jost', sans-serif;
+        color: var(--text);
         outline: none;
-        background: #fff;
-        color: var(--text-color);
-        transition: all 0.3s ease;
+        transition: border-color 0.25s, background 0.25s;
+      }
+
+      input::placeholder { color: rgba(160,136,144,0.5); }
+
+      input:focus {
+        border-color: var(--accent);
+        background: rgba(232,160,180,0.06);
       }
 
       button {
         width: 100%;
-        padding: 16px;
-        background: var(--button-grad);
+        padding: 17px;
+        background: var(--grad);
         color: white;
         border: none;
-        border-radius: 15px;
-        font-size: 16px;
-        font-weight: 600;
+        border-radius: 14px;
+        font-family: 'Jost', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 3px;
+        text-transform: uppercase;
         cursor: pointer;
-        box-shadow: 0 10px 20px rgba(225, 149, 171, 0.3);
-        transition: all 0.3s ease;
-        margin-top: 10px;
+        margin-top: 28px;
+        box-shadow: 0 12px 28px rgba(192,96,128,0.35);
+        transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
       }
 
-      .footer-text {
-        font-size: 11px;
-        color: #aaa;
-        margin-top: 25px;
+      button:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 16px 32px rgba(192,96,128,0.45); }
+      button:active { transform: translateY(0); }
+      button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+      .footer {
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 1.5px;
+        text-align: center;
+        margin-top: 28px;
+        opacity: 0.6;
+        text-transform: uppercase;
       }
+
+      .status {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        text-align: center;
+      }
+      .status.success { background: rgba(100,200,120,0.1); color: #7ecf8e; border: 1px solid rgba(100,200,120,0.2); }
+      .status.error   { background: rgba(220,80,80,0.1); color: #e88080; border: 1px solid rgba(220,80,80,0.2); }
     </style>
   </head>
   <body>
     <div class="card">
-      <div class="logo">LASHES</div>
-      <div class="subtitle">Studio & Beauty</div>
+      <div class="logo">Lashes</div>
+      <div class="subtitle">Studio &amp; Beauty</div>
+      <div class="divider"></div>
 
-      <div class="input-box">
-        <input type="text" id="name" placeholder="Имя клиента" />
+      <div class="field">
+        <label>Имя</label>
+        <input type="text" id="name" placeholder="Ваше имя" autocomplete="given-name" />
       </div>
 
-      <div class="input-box">
-        <input type="tel" id="phone" placeholder="+7 (___) ___--" />
+      <div class="field">
+        <label>Телефон</label>
+        <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" autocomplete="tel" />
       </div>
 
-      <button id="main-button">ЗАПИСАТЬСЯ</button>
+      <button id="btn">Записаться</button>
+      <div class="status" id="status"></div>
 
-      <div class="footer-text">Perfect lashes every time</div>
+      <div class="footer">Perfect lashes every time</div>
     </div>
 
     <script>
-      // Объединенная безопасная логика инициализации и отправки
-      window.onload = function() {
-          const tg = window.Telegram?.WebApp;
-          
-          if (tg) {
-              tg.ready();
-              tg.expand();
-              // Автозаполнение имени из ТГ
-              if (tg.initDataUnsafe?.user?.first_name) {
-                  document.getElementById('name').value = tg.initDataUnsafe.user.first_name;
-              }
+      const tg = window.Telegram?.WebApp;
+
+      // Инициализация WebApp
+      if (tg) {
+        tg.ready();
+        tg.expand();
+
+        // Автозаполнение имени из профиля Telegram
+        const firstName = tg.initDataUnsafe?.user?.first_name || '';
+        const lastName  = tg.initDataUnsafe?.user?.last_name  || '';
+        if (firstName) {
+          document.getElementById('name').value = [firstName, lastName].filter(Boolean).join(' ');
+        }
+      }
+
+      document.getElementById('btn').addEventListener('click', async function () {
+        const name  = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const statusEl = document.getElementById('status');
+
+        if (!name || !phone) {
+          showStatus('Пожалуйста, заполните имя и номер телефона', 'error');
+          return;
+        }
+
+        this.disabled = true;
+        this.textContent = 'Отправка...';
+
+        // ─────────────────────────────────────────────────
+        // ID пользователя берём из initDataUnsafe (клиентская сторона).
+        // ВАЖНО: для продакшна нужно верифицировать initData на сервере
+        // через HMAC-SHA256 с токеном бота — иначе ID можно подделать.
+        // Передаём также сырой initData, чтобы n8n мог верифицировать.
+        // ─────────────────────────────────────────────────
+        const user   = tg?.initDataUnsafe?.user;
+        const userId = user?.id ?? null;   // null если открыт не через Telegram
+
+        const payload = {
+          telegram_id: userId,        // ID пользователя в Telegram (скрытый от клиента в UI)
+          name:        name,
+          phone:       phone,
+          init_data:   tg?.initData ?? null,  // сырая строка для верификации на сервере
+        };
+
+        const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
+
+        try {
+          const res = await fetch(webhookUrl, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload),
+          });
+
+          if (res.ok) {
+            showStatus('Вы записаны! Мы свяжемся с вами скоро 🌸', 'success');
+            document.getElementById('btn').textContent = 'Готово ✓';
+            // Закрыть WebApp через 2 сек если открыт в Telegram
+            if (tg) setTimeout(() => tg.close(), 2000);
+          } else {
+            throw new Error('Статус: ' + res.status);
           }
+        } catch (e) {
+          showStatus('Ошибка соединения. Попробуйте ещё раз.', 'error');
+          document.getElementById('btn').disabled = false;
+          document.getElementById('btn').textContent = 'Записаться';
+        }
+      });
 
-          document.getElementById('main-button').onclick = function() {
-              const name = document.getElementById('name').value.trim();
-              const phone = document.getElementById('phone').value.trim();
-
-              // Проверка заполнения полей формы
-              if (!name || !phone) {
-                  alert("Пожалуйста, заполните имя и номер телефона!");
-                  return;
-              }
-
-              // Прямая попытка достать ID (ИСПРАВЛЕНО: Безопасное извлечение переменной)
-              const user = tg?.initDataUnsafe?.user;
-              const userId = user ? user.id : "ID_ВСЕ_ЕЩЕ_НЕТ";
-
-              const data = {
-                  id: userId,
-                  name: name,
-                  phone: phone
-              };
-
-              // Ваш постоянный Production вебхук n8n
-              const webhookUrl = 'https://maximkorotaev.app.n8n.cloud/webhook/f629f86a-f089-4619-a70c-296108bfaf0c';
-
-              fetch(webhookUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(data)
-              })
-              .then(response => {
-                  if (response.ok) {
-                      alert("Готово! ID: " + userId);
-                      if (tg) tg.close();
-                  } else {
-                      alert("Ошибка сервера n8n. Статус: " + response.status);
-                  }
-              })
-              .catch(() => {
-                  alert("Ошибка соединения с n8n");
-              });
-          };
-      };
+      function showStatus(msg, type) {
+        const el = document.getElementById('status');
+        el.textContent = msg;
+        el.className = 'status ' + type;
+        el.style.display = 'block';
+      }
     </script>
   </body>
 </html>
