@@ -948,7 +948,7 @@
               class="btn"
               style="margin-top: 14px"
               id="confirmBtn"
-              onclick="submit()"
+              onclick="submitForm()"
             >
               Подтвердить запись
             </button>
@@ -1473,29 +1473,53 @@
       }
 
       // ── SUBMIT ─────────────────────────────────────────────────
-      async function submit() {
+      async function submitForm() {
         const btn = document.getElementById("confirmBtn");
         const err = document.getElementById("err4");
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span>Записываем...';
+        // telegram_id: несколько способов получить
+        let tgId = 0;
         try {
+          tgId = tg?.initDataUnsafe?.user?.id || 0;
+        } catch (e) {}
+        if (!tgId) {
+          try {
+            const params = new URLSearchParams(tg?.initData || "");
+            const user = JSON.parse(
+              decodeURIComponent(params.get("user") || "{}"),
+            );
+            tgId = user.id || 0;
+          } catch (e) {}
+        }
+
+        // Проверяем что URL задан
+        if (!master.bookingUrl || master.bookingUrl.includes("ВСТАВЬ")) {
+          showErr(err, "URL вебхука не задан — замени ВСТАВЬ_URL в коде");
+          btn.disabled = false;
+          btn.innerHTML = "Подтвердить запись";
+          return;
+        }
+
+        try {
+          const payload = {
+            phone: state.phone,
+            name: state.name,
+            telegram_id: tgId,
+            date: state.date,
+            time: state.time,
+            service: state.serviceLabel || "",
+          };
           const res = await fetch(master.bookingUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              phone: state.phone,
-              name: state.name,
-              telegram_id: tgUser?.id || 0,
-              date: state.date,
-              time: state.time,
-              service: state.serviceLabel || "",
-            }),
+            body: JSON.stringify(payload),
           });
-          if (!res.ok) throw new Error(res.status);
+          if (!res.ok) throw new Error("HTTP " + res.status);
           goStep("s5");
           setTimeout(() => tg?.close(), 3000);
-        } catch {
-          showErr(err, "Ошибка отправки. Попробуйте ещё раз.");
+        } catch (e) {
+          showErr(err, "Ошибка: " + e.message + ". Попробуйте ещё раз.");
           btn.disabled = false;
           btn.innerHTML = "Подтвердить запись";
         }
