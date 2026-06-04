@@ -1017,42 +1017,42 @@
             emoji: "🙈",
             name: '"Все включено"',
             price: "2 000 ₽",
-            desc: "Снятие · Маникюр · Покрытие · Дизайн",
+            desc: "Снятие · Маникюр · Покрытие · Дизайн · 2,5 ч",
           },
           {
             id: "build",
             emoji: "💅",
             name: "Наращивание ногтей",
             price: "2 700 ₽",
-            desc: "Моделирование искусственных ногтей",
+            desc: "Моделирование искусственных ногтей · 2,5 ч",
           },
           {
             id: "xlong",
             emoji: "👻",
             name: "Экстра-длинное наращивание",
             price: "3 300 ₽",
-            desc: "Свободный край 1,5–2× длины ногтевого ложа",
+            desc: "Свободный край 1,5–2× длины ногтевого ложа · 3 ч",
           },
           {
             id: "rem",
             emoji: "✨",
             name: "Просто снятие",
             price: "300 ₽",
-            desc: "Снятие покрытия + обработка кутикулы",
+            desc: "Снятие покрытия + обработка кутикулы · 20 мин",
           },
           {
             id: "remman",
             emoji: "👀",
             name: "Снятие и маникюр",
             price: "800 ₽",
-            desc: "Снятие + гигиеническая обработка ногтей",
+            desc: "Снятие + гигиеническая обработка ногтей · 1 ч",
           },
           {
             id: "fix",
             emoji: "🤕",
             name: "Наращивание сломанного ногтя",
             price: "200 ₽",
-            desc: "Восстановление сломанного / треснувшего ногтя",
+            desc: "Восстановление сломанного / треснувшего ногтя · 2,5 ч",
           },
         ],
         lash: [
@@ -1122,6 +1122,16 @@
         ],
       };
       // ──────────────────────────────────────────────────────────────
+
+      // Длительность услуг Ольги в минутах
+      const SERVICE_DURATION = {
+        all: 150,
+        build: 150,
+        rem: 20,
+        remman: 60,
+        fix: 150,
+        xlong: 180,
+      };
 
       const tg = window.Telegram?.WebApp;
       if (tg) {
@@ -1413,24 +1423,47 @@
           '<div class="slots-loading"><span class="pulse">Проверяем расписание...</span></div>';
         document.getElementById("s3btn").disabled = true;
         state.time = "";
+
+        const duration =
+          master.hasPrice && state.service
+            ? SERVICE_DURATION[state.service] || 60
+            : 60;
+
+        // Генерируем fallback сразу (используется если API недоступен)
+        function getFallbackSlots() {
+          const result = [];
+          for (let m = 9 * 60; m < 17 * 60; m += 30) {
+            if (m + duration <= 17 * 60) {
+              const h = Math.floor(m / 60),
+                mn = m % 60;
+              result.push(
+                String(h).padStart(2, "0") + ":" + String(mn).padStart(2, "0"),
+              );
+            }
+          }
+          return result;
+        }
+
+        // Таймаут 5 секунд — если API не ответил, показываем fallback
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         try {
-          const res = await fetch(`${master.slotsUrl}?date=${date}`);
+          const res = await fetch(
+            `${master.slotsUrl}?date=${date}&duration=${duration}`,
+            { signal: controller.signal },
+          );
+          clearTimeout(timeoutId);
           const json = await res.json();
-          renderSlots(json.available || []);
-          sub.textContent = (json.available || []).length
+          const slots = json.available || [];
+          renderSlots(slots);
+          sub.textContent = slots.length
             ? "Выберите удобное время"
             : "Нет свободных слотов";
         } catch {
-          renderSlots([
-            "09:00",
-            "10:00",
-            "11:00",
-            "12:00",
-            "13:00",
-            "14:00",
-            "15:00",
-            "16:00",
-          ]);
+          clearTimeout(timeoutId);
+          // API недоступен — показываем локально сгенерированные слоты
+          renderSlots(getFallbackSlots());
           sub.textContent = "Выберите удобное время";
         }
       }
@@ -1513,6 +1546,10 @@
             date: state.date,
             time: state.time,
             service: state.serviceLabel || "",
+            duration_min:
+              master.hasPrice && state.service
+                ? SERVICE_DURATION[state.service] || 60
+                : 60,
           };
           const res = await fetch(master.bookingUrl, {
             method: "POST",
