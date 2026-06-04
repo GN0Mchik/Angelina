@@ -1455,7 +1455,11 @@
           );
           clearTimeout(timeoutId);
           const json = await res.json();
-          const slots = json.available || [];
+          // Фильтруем клиентски — убираем слоты где услуга не вмещается до 17:00
+          const slots = (json.available || []).filter((slot) => {
+            const [h, m] = slot.split(":").map(Number);
+            return h * 60 + m + duration <= 17 * 60;
+          });
           renderSlots(slots);
           sub.textContent = slots.length
             ? "Выберите удобное время"
