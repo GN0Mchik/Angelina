@@ -1,4 +1,4 @@
-<!doctype html>
+\<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
       *,
       *::before,
@@ -891,6 +892,106 @@
             <button class="btn-ghost" onclick="goStep('s2')">← Назад</button>
           </div>
 
+          <!-- ШАГ Аванс -->
+          <div class="screen" id="sPayment">
+            <div class="badge">
+              <span class="bdot"></span><span class="btxt" id="bPayment"></span>
+            </div>
+            <div class="stitle">Аванс</div>
+            <div class="ssub">Для подтверждения записи</div>
+            <div class="sline"></div>
+
+            <!-- Состояние 1: до оплаты -->
+            <div id="payBefore">
+              <div style="text-align: center; margin-bottom: 24px">
+                <div
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 60px;
+                    font-weight: 300;
+                    color: var(--accent, #c8506a);
+                    line-height: 1;
+                  "
+                >
+                  10 ₽
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    letter-spacing: 0.2em;
+                    text-transform: uppercase;
+                    color: rgba(220, 170, 185, 0.4);
+                    margin-top: 6px;
+                  "
+                >
+                  Аванс за запись
+                </div>
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 20px;
+                "
+              >
+                Нажмите кнопку ниже — откроется<br />страница оплаты
+                Сбербанка.<br />После оплаты вернитесь сюда.
+              </div>
+              <button class="btn" onclick="openPayment()">
+                💳 Перейти к оплате
+              </button>
+              <button class="btn-ghost" onclick="goStep('s3')">← Назад</button>
+            </div>
+
+            <!-- Состояние 2: ожидание возврата -->
+            <div
+              id="payWaiting"
+              style="display: none; text-align: center; padding: 8px 0"
+            >
+              <div
+                style="
+                  font-size: 40px;
+                  margin-bottom: 16px;
+                  animation: pulse 1.5s ease infinite;
+                "
+              >
+                💳
+              </div>
+              <div
+                style="
+                  font-family: &quot;Cormorant Garamond&quot;, serif;
+                  font-size: 24px;
+                  font-weight: 300;
+                  margin-bottom: 10px;
+                "
+              >
+                Ожидаем оплату...
+              </div>
+              <div
+                style="
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 24px;
+                "
+              >
+                Оплатите 10 ₽ в приложении<br />и вернитесь сюда
+              </div>
+              <button class="btn" onclick="returnedFromPayment()">
+                ✓ Оплатил, продолжить
+              </button>
+              <button
+                class="btn-ghost"
+                style="margin-top: 8px"
+                onclick="cancelWaiting()"
+              >
+                ← Отмена
+              </button>
+            </div>
+          </div>
+
           <!-- ШАГ 4: Подтверждение -->
           <div class="screen" id="s4">
             <div class="badge">
@@ -977,6 +1078,16 @@
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
+      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
+      // Замени phone и qrText на свой номер СБП
+      const PAYMENT = {
+        phone: "+7 908 581-70-31",
+        qrText: "https://www.sberbank.com/sms/pbpn?requisiteNumber=79085817031",
+        amount: 10,
+        enabled: true,
+      };
+      // ────────────────────────────────────────────────────────
+
       const MASTERS = {
         nails: {
           name: "Ольга",
@@ -987,7 +1098,7 @@
           accent: "#C8506A",
           accent2: "#9C3050",
           hasPrice: true,
-          steps: ["Данные", "Услуга", "Дата", "Время", "Запись"],
+          steps: ["Данные", "Услуга", "Дата", "Время", "Аванс", "Запись"],
           slotsUrl:
             "https://sicret.space/webhook/0ae7aac9-f62b-40ac-bc49-c94ba670e7f8",
           bookingUrl:
@@ -1002,7 +1113,7 @@
           accent: "#8B60CC",
           accent2: "#5A3290",
           hasPrice: true,
-          steps: ["Данные", "Услуга", "Дата", "Время", "Запись"],
+          steps: ["Данные", "Услуга", "Дата", "Время", "Аванс", "Запись"],
           slotsUrl:
             "https://sicret.space/webhook/aa43c45f-2f99-4a83-b246-7b9a0c3f2d65",
           bookingUrl:
@@ -1242,8 +1353,8 @@
       function setProgress(screenId) {
         if (!master) return;
         const order = master.hasPrice
-          ? ["s1", "sPrice", "s2", "s3", "s4", "s5"]
-          : ["s1", "s2", "s3", "s4", "s5"];
+          ? ["s1", "sPrice", "s2", "s3", "sPayment", "s4", "s5"]
+          : ["s1", "s2", "s3", "sPayment", "s4", "s5"];
         const stepIdx = order.indexOf(screenId); // 0-based position
         const total = master.steps.length;
         const filled = (Math.max(1, stepIdx) / total) * 100;
@@ -1521,6 +1632,66 @@
         document.getElementById("cPhone").textContent = "+" + state.phone;
         document.getElementById("cDate").textContent = state.dateLabel;
         document.getElementById("cTime").textContent = state.time;
+        if (PAYMENT.enabled) {
+          showPaymentScreen();
+        } else {
+          goStep("s4");
+        }
+      }
+
+      function showPaymentScreen() {
+        const bp = document.getElementById("bPayment");
+        if (bp) bp.textContent = master.badgeText;
+        // Сброс в начальное состояние
+        document.getElementById("payBefore").style.display = "block";
+        document.getElementById("payWaiting").style.display = "none";
+        goStep("sPayment");
+      }
+
+      function openPayment() {
+        // Показать экран ожидания
+        document.getElementById("payBefore").style.display = "none";
+        document.getElementById("payWaiting").style.display = "block";
+
+        // Открыть ссылку оплаты
+        const url = PAYMENT.qrText;
+        if (tg && tg.openLink) {
+          tg.openLink(url);
+        } else {
+          window.open(url, "_blank");
+        }
+
+        // Автоматически перейти к подтверждению когда пользователь вернётся
+        document.addEventListener("visibilitychange", onReturnFromPayment, {
+          once: true,
+        });
+      }
+
+      function onReturnFromPayment() {
+        if (document.visibilityState === "visible") {
+          // Небольшая задержка чтобы страница успела отрисоваться
+          setTimeout(() => {
+            if (
+              document.getElementById("sPayment").classList.contains("active")
+            ) {
+              returnedFromPayment();
+            }
+          }, 800);
+        }
+      }
+
+      function returnedFromPayment() {
+        document.removeEventListener("visibilitychange", onReturnFromPayment);
+        goStep("s4");
+      }
+
+      function cancelWaiting() {
+        document.removeEventListener("visibilitychange", onReturnFromPayment);
+        document.getElementById("payBefore").style.display = "block";
+        document.getElementById("payWaiting").style.display = "none";
+      }
+
+      function confirmPayment() {
         goStep("s4");
       }
 
