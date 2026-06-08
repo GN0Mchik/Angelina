@@ -1448,16 +1448,24 @@
 
       // ── NAVIGATION ─────────────────────────────────────────────
       function goStep(id) {
-        if (curScreenId)
-          document.getElementById(curScreenId)?.classList.remove("active");
-        curScreenId = id;
-        const el = document.getElementById(id);
-        el.style.animation = "none";
-        el.offsetHeight;
-        el.style.animation = "";
-        el.classList.add("active");
-        setProgress(id);
-        window.scrollTo(0, 0);
+        try {
+          if (curScreenId)
+            document.getElementById(curScreenId)?.classList.remove("active");
+          curScreenId = id;
+          const el = document.getElementById(id);
+          if (!el) {
+            console.error("goStep: element not found:", id);
+            return;
+          }
+          el.style.animation = "none";
+          el.offsetHeight;
+          el.style.animation = "";
+          el.classList.add("active");
+          setProgress(id);
+          window.scrollTo(0, 0);
+        } catch (e) {
+          console.error("goStep error:", id, e.message);
+        }
       }
 
       // ── PHONE MASK ─────────────────────────────────────────────
@@ -1706,32 +1714,51 @@
       }
 
       function nextFromTime() {
-        const err = document.getElementById("err3");
-        if (!state.time) {
-          showErr(err, "Выберите время");
-          return;
-        }
-        err.classList.remove("show");
-        document.getElementById("cName").textContent = state.name;
-        document.getElementById("cPhone").textContent = "+" + state.phone;
-        document.getElementById("cDate").textContent = state.dateLabel;
-        document.getElementById("cTime").textContent = state.time;
-        const cAgeEl = document.getElementById("cAge");
-        if (cAgeEl) cAgeEl.textContent = state.age ? state.age + " лет" : "";
-        if (PAYMENT.enabled) {
-          showPaymentScreen();
-        } else {
+        try {
+          const err = document.getElementById("err3");
+          if (!state.time) {
+            showErr(err, "Выберите время");
+            return;
+          }
+          err.classList.remove("show");
+
+          const fields = {
+            cName: state.name,
+            cPhone: "+" + state.phone,
+            cDate: state.dateLabel,
+            cTime: state.time,
+          };
+          for (const [id, val] of Object.entries(fields)) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          }
+          const cAgeEl = document.getElementById("cAge");
+          if (cAgeEl) cAgeEl.textContent = state.age ? state.age + " лет" : "";
+
+          if (typeof PAYMENT !== "undefined" && PAYMENT.enabled) {
+            showPaymentScreen();
+          } else {
+            goStep("s4");
+          }
+        } catch (e) {
+          console.error("nextFromTime error:", e.message);
           goStep("s4");
         }
       }
 
       function showPaymentScreen() {
-        const bp = document.getElementById("bPayment");
-        if (bp) bp.textContent = master.badgeText;
-        // Сброс в начальное состояние
-        document.getElementById("payBefore").style.display = "block";
-        document.getElementById("payWaiting").style.display = "none";
-        goStep("sPayment");
+        try {
+          const bp = document.getElementById("bPayment");
+          if (bp) bp.textContent = master.badgeText;
+          const pb = document.getElementById("payBefore");
+          const pw = document.getElementById("payWaiting");
+          if (pb) pb.style.display = "block";
+          if (pw) pw.style.display = "none";
+          goStep("sPayment");
+        } catch (e) {
+          console.error("showPaymentScreen error:", e.message);
+          goStep("s4");
+        }
       }
 
       function openPayment() {
