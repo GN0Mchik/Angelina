@@ -13,7 +13,7 @@
       rel="stylesheet"
     />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
       *,
       *::before,
@@ -742,7 +742,7 @@
         text-align: center;
         margin-top: 18px;
       }
-    
+
       /* ── CHECKBOX СОГЛАСИЕ ── */
       .consent-wrap {
         display: flex;
@@ -766,8 +766,8 @@
         transition: all 0.2s;
       }
       .consent-box.checked {
-        background: #C8506A;
-        border-color: #C8506A;
+        background: #c8506a;
+        border-color: #c8506a;
       }
       .consent-check {
         display: none;
@@ -786,7 +786,6 @@
         line-height: 1.6;
         padding-top: 2px;
       }
-
     </style>
   </head>
   <body class="theme-default">
@@ -871,10 +870,17 @@
                 max="99"
               />
             </div>
-            <div class="consent-wrap" onclick="toggleConsent()" id="consentWrap">
-              <div class="consent-box" id="consentBox"><span class="consent-check">✓</span></div>
+            <div
+              class="consent-wrap"
+              onclick="toggleConsent()"
+              id="consentWrap"
+            >
+              <div class="consent-box" id="consentBox">
+                <span class="consent-check">✓</span>
+              </div>
               <div class="consent-text">
-                Я согласен(а) на обработку персональных данных в соответствии с политикой конфиденциальности студии
+                Я согласен(а) на обработку персональных данных в соответствии с
+                политикой конфиденциальности студии
               </div>
             </div>
             <div class="err" id="err1"></div>
@@ -953,39 +959,107 @@
             <button class="btn-ghost" onclick="goStep('s2')">← Назад</button>
           </div>
 
-                    <!-- ШАГ Аванс -->
+          <!-- ШАГ Аванс -->
           <div class="screen" id="sPayment">
-            <div class="badge"><span class="bdot"></span><span class="btxt" id="bPayment"></span></div>
+            <div class="badge">
+              <span class="bdot"></span><span class="btxt" id="bPayment"></span>
+            </div>
             <div class="stitle">Аванс</div>
             <div class="ssub">Для подтверждения записи</div>
             <div class="sline"></div>
 
             <!-- Состояние 1: до оплаты -->
             <div id="payBefore">
-              <div style="text-align:center;margin-bottom:24px">
-                <div style="font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--accent,#C8506A);line-height:1">10 ₽</div>
-                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(220,170,185,.4);margin-top:6px">Аванс за запись</div>
+              <div style="text-align: center; margin-bottom: 24px">
+                <div
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 60px;
+                    font-weight: 300;
+                    color: var(--accent, #c8506a);
+                    line-height: 1;
+                  "
+                >
+                  10 ₽
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    letter-spacing: 0.2em;
+                    text-transform: uppercase;
+                    color: rgba(220, 170, 185, 0.4);
+                    margin-top: 6px;
+                  "
+                >
+                  Аванс за запись
+                </div>
               </div>
-              <div style="text-align:center;font-size:13px;color:rgba(220,170,185,.4);line-height:1.7;margin-bottom:20px">
-                Нажмите кнопку ниже — откроется<br>страница оплаты Сбербанка.<br>После оплаты вернитесь сюда.
+              <div
+                style="
+                  text-align: center;
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 20px;
+                "
+              >
+                Нажмите кнопку ниже — откроется<br />страница оплаты
+                Сбербанка.<br />После оплаты вернитесь сюда.
               </div>
-              <button class="btn" onclick="openPayment()">💳 Перейти к оплате</button>
+              <button class="btn" onclick="openPayment()">
+                💳 Перейти к оплате
+              </button>
               <button class="btn-ghost" onclick="goStep('s3')">← Назад</button>
             </div>
 
             <!-- Состояние 2: ожидание возврата -->
-            <div id="payWaiting" style="display:none;text-align:center;padding:8px 0">
-              <div style="font-size:40px;margin-bottom:16px;animation:pulse 1.5s ease infinite">💳</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:10px">Ожидаем оплату...</div>
-              <div style="font-size:13px;color:rgba(220,170,185,.4);line-height:1.7;margin-bottom:24px">
-                Оплатите 10 ₽ в приложении<br>и вернитесь сюда
+            <div
+              id="payWaiting"
+              style="display: none; text-align: center; padding: 8px 0"
+            >
+              <div
+                style="
+                  font-size: 40px;
+                  margin-bottom: 16px;
+                  animation: pulse 1.5s ease infinite;
+                "
+              >
+                💳
               </div>
-              <button class="btn" onclick="returnedFromPayment()">✓ Оплатил, продолжить</button>
-              <button class="btn-ghost" style="margin-top:8px" onclick="cancelWaiting()">← Отмена</button>
+              <div
+                style="
+                  font-family: &quot;Cormorant Garamond&quot;, serif;
+                  font-size: 24px;
+                  font-weight: 300;
+                  margin-bottom: 10px;
+                "
+              >
+                Ожидаем оплату...
+              </div>
+              <div
+                style="
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 24px;
+                "
+              >
+                Оплатите 10 ₽ в приложении<br />и вернитесь сюда
+              </div>
+              <button class="btn" onclick="returnedFromPayment()">
+                ✓ Оплатил, продолжить
+              </button>
+              <button
+                class="btn-ghost"
+                style="margin-top: 8px"
+                onclick="cancelWaiting()"
+              >
+                ← Отмена
+              </button>
             </div>
           </div>
 
-<!-- ШАГ 4: Подтверждение -->
+          <!-- ШАГ 4: Подтверждение -->
           <div class="screen" id="s4">
             <div class="badge">
               <span class="bdot"></span><span class="btxt" id="b4"></span>
@@ -1006,6 +1080,13 @@
                 <div>
                   <div class="cl">Телефон</div>
                   <div class="cv" id="cPhone"></div>
+                </div>
+              </div>
+              <div class="crow">
+                <span class="ci">🎂</span>
+                <div>
+                  <div class="cl">Возраст</div>
+                  <div class="cv" id="cAge"></div>
                 </div>
               </div>
               <div class="crow" id="cSvcRow" style="display: none">
@@ -1071,17 +1152,17 @@
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
-       // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
+      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
       // Замени phone и qrText на свой номер СБП
       const PAYMENT = {
-        phone:   '+7 908 581-70-31',
-        qrText:  'https://www.sberbank.com/sms/pbpn?requisiteNumber=79085817031',
-        amount:  10,
+        phone: "+7 908 581-70-31",
+        qrText: "https://www.sberbank.com/sms/pbpn?requisiteNumber=79085817031",
+        amount: 10,
         enabled: true,
       };
       // ────────────────────────────────────────────────────────
 
-     const MASTERS = {
+      const MASTERS = {
         nails: {
           name: "Ольга",
           emoji: "💅",
@@ -1227,26 +1308,25 @@
       };
       // ──────────────────────────────────────────────────────────────
 
-
       // Длительность услуг в минутах
       const SERVICE_DURATION = {
         // Ольга (маникюр)
-        'all':    150,  // Все включено — 2.5ч
-        'build':  150,  // Наращивание ногтей — 2.5ч
-        'rem':     20,  // Просто снятие — 20мин
-        'remman':  60,  // Снятие и маникюр — 1ч
-        'fix':    150,  // Наращивание сломанного — 2.5ч
-        'xlong':  180,  // Экстра-длинное — 3ч
+        all: 150, // Все включено — 2.5ч
+        build: 150, // Наращивание ногтей — 2.5ч
+        rem: 20, // Просто снятие — 20мин
+        remman: 60, // Снятие и маникюр — 1ч
+        fix: 150, // Наращивание сломанного — 2.5ч
+        xlong: 180, // Экстра-длинное — 3ч
         // Ангелина (ресницы)
-        'classic': 100, // Классика — 1ч 40мин
-        '2d':     120,  // Объём 2D — 2ч
-        '3d':     150,  // Объём 3D — 2ч 30мин
-        '4d':     160,  // Объём 4D — 2ч 40мин
-        'wet':    120,  // Мокрый эффект — 2ч
-        'trend':  150,  // Трендовый эффект — 2ч 30мин
-        'corners':  90, // Наращивание уголков — 1ч 30мин
-        'remove':   15, // Снятие — 15мин
-        'lamin':    60, // Ламинирование — 1ч
+        classic: 100, // Классика — 1ч 40мин
+        "2d": 120, // Объём 2D — 2ч
+        "3d": 150, // Объём 3D — 2ч 30мин
+        "4d": 160, // Объём 4D — 2ч 40мин
+        wet: 120, // Мокрый эффект — 2ч
+        trend: 150, // Трендовый эффект — 2ч 30мин
+        corners: 90, // Наращивание уголков — 1ч 30мин
+        remove: 15, // Снятие — 15мин
+        lamin: 60, // Ламинирование — 1ч
       };
 
       const tg = window.Telegram?.WebApp;
@@ -1550,16 +1630,21 @@
         document.getElementById("s3btn").disabled = true;
         state.time = "";
 
-        const duration = (master.hasPrice && state.service)
-          ? (SERVICE_DURATION[state.service] || 60) : 60;
+        const duration =
+          master.hasPrice && state.service
+            ? SERVICE_DURATION[state.service] || 60
+            : 60;
 
         // Генерируем fallback сразу (используется если API недоступен)
         function getFallbackSlots() {
           const result = [];
-          for (let m = 9*60; m < 17*60; m += 30) {
-            if (m + duration <= 17*60) {
-              const h = Math.floor(m/60), mn = m%60;
-              result.push(String(h).padStart(2,'0')+':'+String(mn).padStart(2,'0'));
+          for (let m = 9 * 60; m < 17 * 60; m += 30) {
+            if (m + duration <= 17 * 60) {
+              const h = Math.floor(m / 60),
+                mn = m % 60;
+              result.push(
+                String(h).padStart(2, "0") + ":" + String(mn).padStart(2, "0"),
+              );
             }
           }
           return result;
@@ -1572,17 +1657,19 @@
         try {
           const res = await fetch(
             `${master.slotsUrl}?date=${date}&duration=${duration}`,
-            { signal: controller.signal }
+            { signal: controller.signal },
           );
           clearTimeout(timeoutId);
           const json = await res.json();
           // Фильтруем клиентски — убираем слоты где услуга не вмещается до 17:00
-          const slots = (json.available || []).filter(slot => {
-            const [h, m] = slot.split(':').map(Number);
-            return (h * 60 + m + duration) <= 17 * 60;
+          const slots = (json.available || []).filter((slot) => {
+            const [h, m] = slot.split(":").map(Number);
+            return h * 60 + m + duration <= 17 * 60;
           });
           renderSlots(slots);
-          sub.textContent = slots.length ? "Выберите удобное время" : "Нет свободных слотов";
+          sub.textContent = slots.length
+            ? "Выберите удобное время"
+            : "Нет свободных слотов";
         } catch {
           clearTimeout(timeoutId);
           // API недоступен — показываем локально сгенерированные слоты
@@ -1629,7 +1716,8 @@
         document.getElementById("cPhone").textContent = "+" + state.phone;
         document.getElementById("cDate").textContent = state.dateLabel;
         document.getElementById("cTime").textContent = state.time;
-        document.getElementById("cAge").textContent = state.age + " лет";
+        const cAgeEl = document.getElementById("cAge");
+        if (cAgeEl) cAgeEl.textContent = state.age ? state.age + " лет" : "";
         if (PAYMENT.enabled) {
           showPaymentScreen();
         } else {
@@ -1660,14 +1748,18 @@
         }
 
         // Автоматически перейти к подтверждению когда пользователь вернётся
-        document.addEventListener("visibilitychange", onReturnFromPayment, { once: true });
+        document.addEventListener("visibilitychange", onReturnFromPayment, {
+          once: true,
+        });
       }
 
       function onReturnFromPayment() {
         if (document.visibilityState === "visible") {
           // Небольшая задержка чтобы страница успела отрисоваться
           setTimeout(() => {
-            if (document.getElementById("sPayment").classList.contains("active")) {
+            if (
+              document.getElementById("sPayment").classList.contains("active")
+            ) {
               returnedFromPayment();
             }
           }, 800);
@@ -1726,7 +1818,10 @@
             date: state.date,
             time: state.time,
             service: state.serviceLabel || "",
-            duration_min: (master.hasPrice && state.service) ? (SERVICE_DURATION[state.service] || 60) : 60,
+            duration_min:
+              master.hasPrice && state.service
+                ? SERVICE_DURATION[state.service] || 60
+                : 60,
             age: state.age || 0,
           };
           const res = await fetch(master.bookingUrl, {
