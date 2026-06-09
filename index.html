@@ -980,7 +980,7 @@
                     line-height: 1;
                   "
                 >
-                  10 ₽
+                  350 ₽
                 </div>
                 <div
                   style="
@@ -991,7 +991,7 @@
                     margin-top: 6px;
                   "
                 >
-                  Аванс за запись
+                  Аванс · оплата картой или СБП
                 </div>
               </div>
               <div
@@ -1003,11 +1003,10 @@
                   margin-bottom: 20px;
                 "
               >
-                Нажмите кнопку ниже — откроется<br />безопасная страница оплаты
-                ЮKassa.<br />После оплаты вы вернётесь сюда автоматически.
+                Нажмите кнопку ниже — откроется<br />страница оплаты ЮKassa.<br />После
+                оплаты вернитесь сюда.
               </div>
-              <div id="payErr" class="err" style="margin-bottom: 12px"></div>
-              <button class="btn" id="payBtn" onclick="openPayment()">
+              <button class="btn" onclick="openPayment()">
                 💳 Перейти к оплате
               </button>
               <button class="btn-ghost" onclick="goStep('s3')">← Назад</button>
@@ -1045,7 +1044,7 @@
                   margin-bottom: 24px;
                 "
               >
-                Завершите оплату на странице<br />ЮKassa и вернитесь сюда
+                Оплатите 10 ₽ в приложении<br />и вернитесь сюда
               </div>
               <button class="btn" onclick="returnedFromPayment()">
                 ✓ Оплатил, продолжить
@@ -1153,22 +1152,14 @@
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
-      // ── НАСТРОЙКА ОПЛАТЫ (ЮKassa через n8n) ──────────────────
+      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
       const PAYMENT = {
-        amount: 10,
+        amount: 350,
         enabled: true,
-        // URL n8n webhook — он принимает POST и создаёт платёж в ЮKassa
-        // Webhook должен вернуть: { confirmation_url, payment_id }
-        createUrl: "YOUR_PAYMENT_WEBHOOK_URL",
-        // URL n8n webhook для проверки статуса платежа
-        // Принимает GET ?payment_id=... → возвращает { status: "succeeded"|"pending"|"canceled" }
-        checkUrl: "YOUR_CHECK_WEBHOOK_URL",
-        // return_url — куда ЮKassa вернёт клиента после оплаты (адрес этой страницы)
-        // Если страница открыта в Telegram WebApp — можно оставить пустым,
-        // тогда используется текущий URL
-        returnUrl: "",
+        createUrl:
+          "https://sicret.space/webhook/4b1ee4f6-d72a-4254-b1cc-ff6dbba01729",
       };
-      // ─────────────────────────────────────────────────────────
+      // ────────────────────────────────────────────────────────
 
       const MASTERS = {
         nails: {
@@ -1769,168 +1760,78 @@
         }
       }
 
-      // ── YOOKASSA PAYMENT ───────────────────────────────────────
-      let _paymentId = null;
-      let _payCheckInterval = null;
-
       async function openPayment() {
-        const btn = document.getElementById("payBtn");
-        const err = document.getElementById("payErr");
-        err.classList.remove("show");
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span>Создаём платёж...';
-
-        // Собираем return_url — куда вернуть пользователя после оплаты
-        const returnUrl =
-          PAYMENT.returnUrl ||
-          (typeof location !== "undefined" ? location.href.split("?")[0] : "");
+        document.getElementById("payBefore").style.display = "none";
+        document.getElementById("payWaiting").style.display = "block";
 
         try {
+          // Запрашиваем ссылку на оплату у n8n
           const res = await fetch(PAYMENT.createUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              amount: PAYMENT.amount,
-              description: `Аванс за запись — ${master.name}`,
-              return_url: returnUrl,
-              metadata: {
-                master: curMasterKey,
-                client_name: state.name,
-                client_phone: state.phone,
-              },
+              telegram_id: tgUser?.id || 0,
+              name: state.name,
+              phone: state.phone,
+              date: state.date,
+              time: state.time,
+              service: state.serviceLabel || "",
+              duration_min: SERVICE_DURATION[state.service] || 60,
+              age: state.age || 0,
+              master: master.name,
             }),
           });
-
-          if (!res.ok) throw new Error("HTTP " + res.status);
           const data = await res.json();
 
-          if (!data.confirmation_url) throw new Error("Нет ссылки на оплату");
-
-          _paymentId = data.payment_id || null;
-
-          // Показываем экран ожидания
-          document.getElementById("payBefore").style.display = "none";
-          document.getElementById("payWaiting").style.display = "block";
+          if (!data.payment_url) throw new Error("Нет ссылки на оплату");
 
           // Открываем страницу оплаты ЮKassa
           if (tg && tg.openLink) {
-            tg.openLink(data.confirmation_url);
+            tg.openLink(data.payment_url);
           } else {
-            window.location.href = data.confirmation_url;
+            window.open(data.payment_url, "_blank");
           }
 
-          // Слушаем возврат на страницу
+          // Когда пользователь вернётся — перейдём к подтверждению
           document.addEventListener("visibilitychange", onReturnFromPayment, {
             once: true,
           });
-
-          // Также запускаем периодическую проверку статуса (каждые 4 сек)
-          if (
-            _paymentId &&
-            PAYMENT.checkUrl &&
-            !PAYMENT.checkUrl.includes("YOUR_")
-          ) {
-            _payCheckInterval = setInterval(checkPaymentStatus, 4000);
-          }
         } catch (e) {
-          showErr(err, "Ошибка создания платежа: " + e.message);
-          btn.disabled = false;
-          btn.innerHTML = "💳 Перейти к оплате";
-        }
-      }
-
-      async function checkPaymentStatus() {
-        if (!_paymentId) return;
-        try {
-          const res = await fetch(
-            `${PAYMENT.checkUrl}?payment_id=${_paymentId}`,
-          );
-          if (!res.ok) return;
-          const data = await res.json();
-          if (data.status === "succeeded") {
-            _stopPaymentCheck();
-            document.removeEventListener(
-              "visibilitychange",
-              onReturnFromPayment,
-            );
-            goStep("s4");
-          } else if (data.status === "canceled") {
-            _stopPaymentCheck();
-            document.getElementById("payWaiting").style.display = "none";
-            document.getElementById("payBefore").style.display = "block";
-            const btn = document.getElementById("payBtn");
-            btn.disabled = false;
-            btn.innerHTML = "💳 Перейти к оплате";
-            const err = document.getElementById("payErr");
-            showErr(err, "Платёж отменён. Попробуйте ещё раз.");
-          }
-        } catch (_) {}
-      }
-
-      function _stopPaymentCheck() {
-        if (_payCheckInterval) {
-          clearInterval(_payCheckInterval);
-          _payCheckInterval = null;
+          console.error("Payment error:", e);
+          // Показываем ошибку
+          document.getElementById("payBefore").style.display = "block";
+          document.getElementById("payWaiting").style.display = "none";
+          alert("Ошибка создания платежа. Попробуйте ещё раз.");
         }
       }
 
       function onReturnFromPayment() {
         if (document.visibilityState === "visible") {
+          // Небольшая задержка чтобы страница успела отрисоваться
           setTimeout(() => {
             if (
               document.getElementById("sPayment").classList.contains("active")
             ) {
-              // Проверяем — может платёж уже прошёл
-              if (
-                _paymentId &&
-                PAYMENT.checkUrl &&
-                !PAYMENT.checkUrl.includes("YOUR_")
-              ) {
-                checkPaymentStatus();
-              } else {
-                // checkUrl не задан — доверяем возврату пользователя
-                returnedFromPayment();
-              }
+              returnedFromPayment();
             }
-          }, 1200);
+          }, 800);
         }
       }
 
       function returnedFromPayment() {
-        _stopPaymentCheck();
         document.removeEventListener("visibilitychange", onReturnFromPayment);
         goStep("s4");
       }
 
       function cancelWaiting() {
-        _stopPaymentCheck();
         document.removeEventListener("visibilitychange", onReturnFromPayment);
         document.getElementById("payBefore").style.display = "block";
         document.getElementById("payWaiting").style.display = "none";
-        const btn = document.getElementById("payBtn");
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = "💳 Перейти к оплате";
-        }
       }
 
       function confirmPayment() {
         goStep("s4");
       }
-
-      // Проверяем при загрузке — вдруг ЮKassa вернула нас с payment_id в URL
-      (function checkReturnFromYooKassa() {
-        try {
-          const params = new URLSearchParams(location.search);
-          const pid = params.get("payment_id");
-          if (pid) {
-            _paymentId = pid;
-            // Если вернулись с payment_id — значит оплата прошла, идём к подтверждению
-            // (точную проверку делаем через checkUrl если задан)
-            window.history.replaceState({}, "", location.pathname);
-          }
-        } catch (_) {}
-      })();
 
       // ── SUBMIT ─────────────────────────────────────────────────
       async function submitForm() {
