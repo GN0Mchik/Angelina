@@ -12,8 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
       *,
       *::before,
@@ -742,7 +741,7 @@
         text-align: center;
         margin-top: 18px;
       }
-    
+
       /* ── CHECKBOX СОГЛАСИЕ ── */
       .consent-wrap {
         display: flex;
@@ -766,8 +765,8 @@
         transition: all 0.2s;
       }
       .consent-box.checked {
-        background: #C8506A;
-        border-color: #C8506A;
+        background: #c8506a;
+        border-color: #c8506a;
       }
       .consent-check {
         display: none;
@@ -786,7 +785,6 @@
         line-height: 1.6;
         padding-top: 2px;
       }
-
     </style>
   </head>
   <body class="theme-default">
@@ -822,10 +820,48 @@
             </button>
           </div>
           <div class="footer">Выберите мастера для записи</div>
+          <button
+            class="btn-ghost"
+            style="margin-top: 12px; width: 100%"
+            onclick="showMyBookings()"
+          >
+            📋 Мои записи
+          </button>
         </div>
       </div>
 
       <!-- ═══ БРОНИРОВАНИЕ ════════════════════════════════════════ -->
+
+      <!-- ═══ ЭКРАН: Мои записи ══════════════════════════════════ -->
+      <div
+        id="sMyBookings"
+        style="display: none; width: 100%; max-width: 400px"
+      >
+        <div class="card">
+          <div class="stitle">Мои записи</div>
+          <div class="ssub">Введите номер телефона</div>
+          <div class="sline"></div>
+          <div class="field">
+            <label>Телефон</label>
+            <input
+              id="mbPhone"
+              type="tel"
+              placeholder="+7 (___) ___-__-__"
+              autocomplete="tel"
+            />
+          </div>
+          <button class="btn" onclick="loadMyBookings()">Найти записи</button>
+          <div id="mbResult" style="margin-top: 16px"></div>
+          <button
+            class="btn-ghost"
+            style="margin-top: 12px"
+            onclick="closeMyBookings()"
+          >
+            ← Назад
+          </button>
+        </div>
+      </div>
+
       <div id="bWrap" style="display: none; width: 100%; max-width: 400px">
         <div class="progress-wrap">
           <div class="progress-track">
@@ -871,10 +907,18 @@
                 max="99"
               />
             </div>
-            <div class="consent-wrap" onclick="toggleConsent()" id="consentWrap">
-              <div class="consent-box" id="consentBox"><span class="consent-check">✓</span></div>
+
+            <div
+              class="consent-wrap"
+              onclick="toggleConsent()"
+              id="consentWrap"
+            >
+              <div class="consent-box" id="consentBox">
+                <span class="consent-check">✓</span>
+              </div>
               <div class="consent-text">
-                Я согласен(а) на обработку персональных данных в соответствии с политикой конфиденциальности студии
+                Я согласен(а) на обработку персональных данных в соответствии с
+                политикой конфиденциальности студии
               </div>
             </div>
             <div class="err" id="err1"></div>
@@ -953,42 +997,124 @@
             <button class="btn-ghost" onclick="goStep('s2')">← Назад</button>
           </div>
 
-                    <!-- ШАГ Аванс -->
+          <!-- ШАГ Аванс -->
           <div class="screen" id="sPayment">
-            <div class="badge"><span class="bdot"></span><span class="btxt" id="bPayment"></span></div>
+            <div class="badge">
+              <span class="bdot"></span><span class="btxt" id="bPayment"></span>
+            </div>
             <div class="stitle">Аванс</div>
             <div class="ssub">Для подтверждения записи</div>
             <div class="sline"></div>
 
             <!-- Состояние 1: до оплаты -->
             <div id="payBefore">
-              <div style="text-align:center;margin-bottom:24px">
-                <div style="font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--accent,#C8506A);line-height:1">350 ₽</div>
-                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(220,170,185,.4);margin-top:6px">Аванс · оплата картой или СБП</div>
+              <div style="text-align: center; margin-bottom: 24px">
+                <div
+                  style="
+                    font-family: &quot;Cormorant Garamond&quot;, serif;
+                    font-size: 60px;
+                    font-weight: 300;
+                    color: var(--accent, #c8506a);
+                    line-height: 1;
+                  "
+                >
+                  350 ₽
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    letter-spacing: 0.2em;
+                    text-transform: uppercase;
+                    color: rgba(220, 170, 185, 0.4);
+                    margin-top: 6px;
+                  "
+                >
+                  Аванс · оплата картой или СБП
+                </div>
               </div>
-              <div style="text-align:center;font-size:13px;color:rgba(220,170,185,.4);line-height:1.7;margin-bottom:20px">
-                Нажмите кнопку ниже — откроется<br>страница оплаты ЮKassa.<br>После оплаты вернитесь сюда.
+              <div
+                style="
+                  text-align: center;
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 20px;
+                "
+              >
+                Нажмите кнопку ниже — откроется<br />страница оплаты ЮKassa.<br />После
+                оплаты вернитесь сюда.
               </div>
-              <button class="btn" onclick="openPayment()">💳 Перейти к оплате</button>
+              <button class="btn" onclick="openPayment()">
+                💳 Перейти к оплате
+              </button>
               <button class="btn-ghost" onclick="goStep('s3')">← Назад</button>
             </div>
 
             <!-- Состояние 2: ожидание возврата -->
-            <div id="payWaiting" style="display:none;text-align:center;padding:8px 0">
-              <div style="font-size:40px;margin-bottom:16px;animation:pulse 1.5s ease infinite">💳</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:10px">Ожидаем оплату...</div>
-              <div style="font-size:13px;color:rgba(220,170,185,.4);line-height:1.7;margin-bottom:24px">
-                Оплатите 350 ₽ в приложении<br>и вернитесь сюда
+            <div
+              id="payWaiting"
+              style="display: none; text-align: center; padding: 8px 0"
+            >
+              <div
+                style="
+                  font-size: 40px;
+                  margin-bottom: 16px;
+                  animation: pulse 1.5s ease infinite;
+                "
+              >
+                💳
               </div>
-              <div style="font-size:12px;color:rgba(220,170,185,.4);text-align:center;margin:8px 0 16px;line-height:1.6">
-                Ожидаем подтверждение оплаты...<br>Переход произойдёт автоматически
+              <div
+                style="
+                  font-family: &quot;Cormorant Garamond&quot;, serif;
+                  font-size: 24px;
+                  font-weight: 300;
+                  margin-bottom: 10px;
+                "
+              >
+                Ожидаем оплату...
               </div>
-              <button id="manualPayBtn" class="btn" style="display:none;margin-top:8px" onclick="goStep('s4')">✓ Оплата прошла, продолжить</button>
-              <button class="btn-ghost" style="margin-top:8px" onclick="cancelWaiting()">← Отмена</button>
+              <div
+                style="
+                  font-size: 13px;
+                  color: rgba(220, 170, 185, 0.4);
+                  line-height: 1.7;
+                  margin-bottom: 24px;
+                "
+              >
+                Оплатите 350 ₽ в приложении<br />и вернитесь сюда
+              </div>
+              <div
+                style="
+                  font-size: 12px;
+                  color: rgba(220, 170, 185, 0.4);
+                  text-align: center;
+                  margin: 8px 0 16px;
+                  line-height: 1.6;
+                "
+              >
+                Ожидаем подтверждение оплаты...<br />Переход произойдёт
+                автоматически
+              </div>
+              <button
+                id="manualPayBtn"
+                class="btn"
+                style="display: none; margin-top: 8px"
+                onclick="goStep('s4')"
+              >
+                ✓ Оплата прошла, продолжить
+              </button>
+              <button
+                class="btn-ghost"
+                style="margin-top: 8px"
+                onclick="cancelWaiting()"
+              >
+                ← Отмена
+              </button>
             </div>
           </div>
 
-<!-- ШАГ 4: Подтверждение -->
+          <!-- ШАГ 4: Подтверждение -->
           <div class="screen" id="s4">
             <div class="badge">
               <span class="bdot"></span><span class="btxt" id="b4"></span>
@@ -1081,15 +1207,20 @@
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
-       // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
+      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
+      const MY_BOOKINGS_URL =
+        "https://sicret.space/webhook/ad929672-65bd-4bb9-a75f-12ae62421d85";
+
       const PAYMENT = {
-        amount:    350,
-        createUrl: 'https://sicret.space/webhook/4b1ee4f6-d72a-4254-b1cc-ff6dbba01729',
-        checkUrl:  'https://sicret.space/webhook/9b8dcde7-273d-40ac-a851-ca62117a9731',
+        amount: 350,
+        createUrl:
+          "https://sicret.space/webhook/4b1ee4f6-d72a-4254-b1cc-ff6dbba01729",
+        checkUrl:
+          "https://sicret.space/webhook/9b8dcde7-273d-40ac-a851-ca62117a9731",
       };
       // ────────────────────────────────────────────────────────
 
-     const MASTERS = {
+      const MASTERS = {
         nails: {
           name: "Ольга",
           emoji: "💅",
@@ -1237,26 +1368,25 @@
       };
       // ──────────────────────────────────────────────────────────────
 
-
       // Длительность услуг в минутах
       const SERVICE_DURATION = {
         // Ольга (маникюр)
-        'all':    150,  // Все включено — 2.5ч
-        'build':  150,  // Наращивание ногтей — 2.5ч
-        'rem':     20,  // Просто снятие — 20мин
-        'remman':  60,  // Снятие и маникюр — 1ч
-        'fix':    150,  // Наращивание сломанного — 2.5ч
-        'xlong':  180,  // Экстра-длинное — 3ч
+        all: 150, // Все включено — 2.5ч
+        build: 150, // Наращивание ногтей — 2.5ч
+        rem: 20, // Просто снятие — 20мин
+        remman: 60, // Снятие и маникюр — 1ч
+        fix: 150, // Наращивание сломанного — 2.5ч
+        xlong: 180, // Экстра-длинное — 3ч
         // Ангелина (ресницы)
-        'classic': 100, // Классика — 1ч 40мин
-        '2d':     120,  // Объём 2D — 2ч
-        '3d':     150,  // Объём 3D — 2ч 30мин
-        '4d':     160,  // Объём 4D — 2ч 40мин
-        'wet':    120,  // Мокрый эффект — 2ч
-        'trend':  150,  // Трендовый эффект — 2ч 30мин
-        'corners':  90, // Наращивание уголков — 1ч 30мин
-        'remove':   15, // Снятие — 15мин
-        'lamin':    60, // Ламинирование — 1ч
+        classic: 100, // Классика — 1ч 40мин
+        "2d": 120, // Объём 2D — 2ч
+        "3d": 150, // Объём 3D — 2ч 30мин
+        "4d": 160, // Объём 4D — 2ч 40мин
+        wet: 120, // Мокрый эффект — 2ч
+        trend: 150, // Трендовый эффект — 2ч 30мин
+        corners: 90, // Наращивание уголков — 1ч 30мин
+        remove: 15, // Снятие — 15мин
+        lamin: 60, // Ламинирование — 1ч
       };
 
       const tg = window.Telegram?.WebApp;
@@ -1357,7 +1487,9 @@
       function setProgress(screenId) {
         if (!master) return;
         const order = master.hasPrice
-          ? master.hasPayment ? ["s1", "sPrice", "s2", "s3", "sPayment", "s4", "s5"] : ["s1", "sPrice", "s2", "s3", "s4", "s5"]
+          ? master.hasPayment
+            ? ["s1", "sPrice", "s2", "s3", "sPayment", "s4", "s5"]
+            : ["s1", "sPrice", "s2", "s3", "s4", "s5"]
           : ["s1", "s2", "s3", "sPayment", "s4", "s5"];
         const stepIdx = order.indexOf(screenId); // 0-based position
         const total = master.steps.length;
@@ -1383,14 +1515,17 @@
             document.getElementById(curScreenId)?.classList.remove("active");
           curScreenId = id;
           const el = document.getElementById(id);
-          if (!el) { console.error("goStep: element not found:", id); return; }
+          if (!el) {
+            console.error("goStep: element not found:", id);
+            return;
+          }
           el.style.animation = "none";
           el.offsetHeight;
           el.style.animation = "";
           el.classList.add("active");
           setProgress(id);
           window.scrollTo(0, 0);
-        } catch(e) {
+        } catch (e) {
           console.error("goStep error:", id, e.message);
         }
       }
@@ -1565,16 +1700,21 @@
         document.getElementById("s3btn").disabled = true;
         state.time = "";
 
-        const duration = (master.hasPrice && state.service)
-          ? (SERVICE_DURATION[state.service] || 60) : 60;
+        const duration =
+          master.hasPrice && state.service
+            ? SERVICE_DURATION[state.service] || 60
+            : 60;
 
         // Генерируем fallback сразу (используется если API недоступен)
         function getFallbackSlots() {
           const result = [];
-          for (let m = 9*60; m < 17*60; m += 30) {
-            if (m + duration <= 17*60) {
-              const h = Math.floor(m/60), mn = m%60;
-              result.push(String(h).padStart(2,'0')+':'+String(mn).padStart(2,'0'));
+          for (let m = 9 * 60; m < 17 * 60; m += 30) {
+            if (m + duration <= 17 * 60) {
+              const h = Math.floor(m / 60),
+                mn = m % 60;
+              result.push(
+                String(h).padStart(2, "0") + ":" + String(mn).padStart(2, "0"),
+              );
             }
           }
           return result;
@@ -1587,17 +1727,19 @@
         try {
           const res = await fetch(
             `${master.slotsUrl}?date=${date}&duration=${duration}`,
-            { signal: controller.signal }
+            { signal: controller.signal },
           );
           clearTimeout(timeoutId);
           const json = await res.json();
           // Фильтруем клиентски — убираем слоты где услуга не вмещается до 17:00
-          const slots = (json.available || []).filter(slot => {
-            const [h, m] = slot.split(':').map(Number);
-            return (h * 60 + m + duration) <= 17 * 60;
+          const slots = (json.available || []).filter((slot) => {
+            const [h, m] = slot.split(":").map(Number);
+            return h * 60 + m + duration <= 17 * 60;
           });
           renderSlots(slots);
-          sub.textContent = slots.length ? "Выберите удобное время" : "Нет свободных слотов";
+          sub.textContent = slots.length
+            ? "Выберите удобное время"
+            : "Нет свободных слотов";
         } catch {
           clearTimeout(timeoutId);
           // API недоступен — показываем локально сгенерированные слоты
@@ -1636,10 +1778,18 @@
       function nextFromTime() {
         try {
           const err = document.getElementById("err3");
-          if (!state.time) { showErr(err, "Выберите время"); return; }
+          if (!state.time) {
+            showErr(err, "Выберите время");
+            return;
+          }
           err.classList.remove("show");
 
-          const fields = { cName: state.name, cPhone: "+" + state.phone, cDate: state.dateLabel, cTime: state.time };
+          const fields = {
+            cName: state.name,
+            cPhone: "+" + state.phone,
+            cDate: state.dateLabel,
+            cTime: state.time,
+          };
           for (const [id, val] of Object.entries(fields)) {
             const el = document.getElementById(id);
             if (el) el.textContent = val;
@@ -1652,7 +1802,7 @@
           } else {
             goStep("s4");
           }
-        } catch(e) {
+        } catch (e) {
           console.error("nextFromTime error:", e.message);
           goStep("s4");
         }
@@ -1667,7 +1817,7 @@
           if (pb) pb.style.display = "block";
           if (pw) pw.style.display = "none";
           goStep("sPayment");
-        } catch(e) {
+        } catch (e) {
           console.error("showPaymentScreen error:", e.message);
           goStep("s4");
         }
@@ -1682,34 +1832,39 @@
 
         try {
           const res = await fetch(PAYMENT.createUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            mode: 'cors',
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            mode: "cors",
             body: JSON.stringify({
               telegram_id: tgUser?.id || 0,
-              name:  state.name, phone: state.phone,
-              date:  state.date, time:  state.time,
-              service: state.serviceLabel || '',
-              duration_min: (SERVICE_DURATION[state.service] || 60),
-              age: state.age || 0, master: master.name
-            })
+              name: state.name,
+              phone: state.phone,
+              date: state.date,
+              time: state.time,
+              service: state.serviceLabel || "",
+              duration_min: SERVICE_DURATION[state.service] || 60,
+              age: state.age || 0,
+              master: master.name,
+            }),
           });
           const pdata = await res.json();
-          if (!pdata.payment_url || !pdata.payment_id) throw new Error('Нет ссылки на оплату');
+          if (!pdata.payment_url || !pdata.payment_id)
+            throw new Error("Нет ссылки на оплату");
 
           paymentId = pdata.payment_id;
 
           // Открываем страницу оплаты
-          if (tg && tg.openLink) tg.openLink(pdata.payment_url);
-          else window.open(pdata.payment_url, "_blank");
+          window.open(pdata.payment_url, "_blank");
 
           // 1. Полинг каждые 3 сек через webhook проверки
           startPaymentPolling();
 
           // 2. Когда пользователь вернётся — дополнительная проверка
           document.addEventListener("visibilitychange", onReturnedFromPayment);
-
-        } catch(e) {
+        } catch (e) {
           console.error("Payment error:", e);
           document.getElementById("payBefore").style.display = "block";
           document.getElementById("payWaiting").style.display = "none";
@@ -1722,16 +1877,24 @@
         let attempts = 0;
         paymentPollInterval = setInterval(async () => {
           attempts++;
-          if (attempts > 40) { clearInterval(paymentPollInterval); return; }
+          if (attempts > 40) {
+            clearInterval(paymentPollInterval);
+            return;
+          }
           try {
-            const res = await fetch(PAYMENT.checkUrl + "?payment_id=" + paymentId);
+            const res = await fetch(
+              PAYMENT.checkUrl + "?payment_id=" + paymentId,
+            );
             const result = await res.json();
             if (result.paid) {
               clearInterval(paymentPollInterval);
-              document.removeEventListener("visibilitychange", onReturnedFromPayment);
+              document.removeEventListener(
+                "visibilitychange",
+                onReturnedFromPayment,
+              );
               goStep("s4");
             }
-          } catch(e) {}
+          } catch (e) {}
         }, 3000);
       }
 
@@ -1740,7 +1903,7 @@
         document.removeEventListener("visibilitychange", onReturnedFromPayment);
         clearInterval(paymentPollInterval);
         // Ждём 1.5 сек и переходим — реальная защита на стороне n8n (payment.succeeded)
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise((r) => setTimeout(r, 1500));
         goStep("s4");
       }
 
@@ -1748,7 +1911,9 @@
         if (document.visibilityState === "visible") {
           // Небольшая задержка чтобы страница успела отрисоваться
           setTimeout(() => {
-            if (document.getElementById("sPayment").classList.contains("active")) {
+            if (
+              document.getElementById("sPayment").classList.contains("active")
+            ) {
               returnedFromPayment();
             }
           }, 800);
@@ -1807,7 +1972,10 @@
             date: state.date,
             time: state.time,
             service: state.serviceLabel || "",
-            duration_min: (master.hasPrice && state.service) ? (SERVICE_DURATION[state.service] || 60) : 60,
+            duration_min:
+              master.hasPrice && state.service
+                ? SERVICE_DURATION[state.service] || 60
+                : 60,
             age: state.age || 0,
           };
           const res = await fetch(master.bookingUrl, {
@@ -1817,7 +1985,7 @@
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
           goStep("s5");
-          setTimeout(() => tg?.close(), 3000);
+          setTimeout(() => {}, 3000);
         } catch (e) {
           showErr(err, "Ошибка: " + e.message + ". Попробуйте ещё раз.");
           btn.disabled = false;
