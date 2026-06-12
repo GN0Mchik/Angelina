@@ -1181,8 +1181,8 @@
           accent: "#C8506A",
           accent2: "#9C3050",
           hasPrice: true,
-          steps: ["Данные", "Услуга", "Дата", "Время", "Аванс", "Запись"],
-          hasPayment: true,
+          hasPayment: false,
+          steps: ["Данные", "Услуга", "Дата", "Время", "Запись"],
           slotsUrl:
             "https://sicret.space/webhook/0ae7aac9-f62b-40ac-bc49-c94ba670e7f8",
           bookingUrl:
@@ -1197,8 +1197,8 @@
           accent: "#8B60CC",
           accent2: "#5A3290",
           hasPrice: true,
+          hasPayment: true,
           steps: ["Данные", "Услуга", "Дата", "Время", "Аванс", "Запись"],
-          hasPayment: false,
           slotsUrl:
             "https://sicret.space/webhook/aa43c45f-2f99-4a83-b246-7b9a0c3f2d65",
           bookingUrl:
@@ -1438,7 +1438,9 @@
       function setProgress(screenId) {
         if (!master) return;
         const order = master.hasPrice
-          ? ["s1", "sPrice", "s2", "s3", "sPayment", "s4", "s5"]
+          ? master.hasPayment
+            ? ["s1", "sPrice", "s2", "s3", "sPayment", "s4", "s5"]
+            : ["s1", "sPrice", "s2", "s3", "s4", "s5"]
           : ["s1", "s2", "s3", "sPayment", "s4", "s5"];
         const stepIdx = order.indexOf(screenId); // 0-based position
         const total = master.steps.length;
