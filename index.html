@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
       *,
@@ -785,6 +786,96 @@
         line-height: 1.6;
         padding-top: 2px;
       }
+
+      /* ── МОИ ЗАПИСИ INLINE ── */
+      .my-bookings-inline {
+        margin: 4px 0 16px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(210, 130, 155, 0.15);
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .my-bookings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .my-bookings-header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .my-bookings-title {
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(220, 170, 185, 0.5);
+      }
+      .my-bookings-chevron {
+        font-size: 14px;
+        color: rgba(220, 170, 185, 0.3);
+        transition: transform 0.25s;
+      }
+      .my-bookings-inline.open .my-bookings-chevron {
+        transform: rotate(180deg);
+      }
+      .my-bookings-body {
+        display: none;
+        padding: 0 14px 14px;
+      }
+      .my-bookings-inline.open .my-bookings-body {
+        display: block;
+      }
+      .mb-loading {
+        text-align: center;
+        padding: 12px 0;
+        font-size: 12px;
+        color: rgba(220, 170, 185, 0.3);
+      }
+      .mb-item {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(210, 130, 155, 0.12);
+        margin-bottom: 8px;
+      }
+      .mb-item:last-child {
+        margin-bottom: 0;
+      }
+      .mb-item-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;
+      }
+      .mb-item-date {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 16px;
+        font-weight: 300;
+        color: #f2dde4;
+      }
+      .mb-item-master {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent, #c8506a);
+      }
+      .mb-item-svc {
+        font-size: 12px;
+        color: rgba(220, 170, 185, 0.45);
+        font-weight: 300;
+      }
+      .mb-empty {
+        font-size: 12px;
+        color: rgba(220, 170, 185, 0.3);
+        text-align: center;
+        padding: 10px 0;
+        font-style: italic;
+      }
     </style>
   </head>
   <body class="theme-default">
@@ -820,48 +911,10 @@
             </button>
           </div>
           <div class="footer">Выберите мастера для записи</div>
-          <button
-            class="btn-ghost"
-            style="margin-top: 12px; width: 100%"
-            onclick="showMyBookings()"
-          >
-            📋 Мои записи
-          </button>
         </div>
       </div>
 
       <!-- ═══ БРОНИРОВАНИЕ ════════════════════════════════════════ -->
-
-      <!-- ═══ ЭКРАН: Мои записи ══════════════════════════════════ -->
-      <div
-        id="sMyBookings"
-        style="display: none; width: 100%; max-width: 400px"
-      >
-        <div class="card">
-          <div class="stitle">Мои записи</div>
-          <div class="ssub">Введите номер телефона</div>
-          <div class="sline"></div>
-          <div class="field">
-            <label>Телефон</label>
-            <input
-              id="mbPhone"
-              type="tel"
-              placeholder="+7 (___) ___-__-__"
-              autocomplete="tel"
-            />
-          </div>
-          <button class="btn" onclick="loadMyBookings()">Найти записи</button>
-          <div id="mbResult" style="margin-top: 16px"></div>
-          <button
-            class="btn-ghost"
-            style="margin-top: 12px"
-            onclick="closeMyBookings()"
-          >
-            ← Назад
-          </button>
-        </div>
-      </div>
-
       <div id="bWrap" style="display: none; width: 100%; max-width: 400px">
         <div class="progress-wrap">
           <div class="progress-track">
@@ -906,6 +959,24 @@
                 min="14"
                 max="99"
               />
+            </div>
+            <!-- Мои записи inline -->
+            <div class="my-bookings-inline" id="myBookingsInline">
+              <div
+                class="my-bookings-header"
+                onclick="toggleMyBookingsInline()"
+              >
+                <div class="my-bookings-header-left">
+                  <span style="font-size: 15px">📋</span>
+                  <span class="my-bookings-title">Мои записи</span>
+                </div>
+                <span class="my-bookings-chevron">▾</span>
+              </div>
+              <div class="my-bookings-body">
+                <div class="mb-loading" id="mbInlineResult">
+                  Введите телефон выше и откройте этот раздел
+                </div>
+              </div>
             </div>
 
             <div
@@ -1207,10 +1278,12 @@
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
-      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
+      // ── МОИ ЗАПИСИ ────────────────────────────────────────────
       const MY_BOOKINGS_URL =
         "https://sicret.space/webhook/ad929672-65bd-4bb9-a75f-12ae62421d85";
+      // ──────────────────────────────────────────────────────────
 
+      // ── НАСТРОЙКА ОПЛАТЫ ──────────────────────────────────────
       const PAYMENT = {
         amount: 350,
         createUrl:
@@ -1857,7 +1930,8 @@
           paymentId = pdata.payment_id;
 
           // Открываем страницу оплаты
-          window.open(pdata.payment_url, "_blank");
+          if (tg && tg.openLink) tg.openLink(pdata.payment_url);
+          else window.open(pdata.payment_url, "_blank");
 
           // 1. Полинг каждые 3 сек через webhook проверки
           startPaymentPolling();
@@ -1984,8 +2058,9 @@
             body: JSON.stringify(payload),
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
+
           goStep("s5");
-          setTimeout(() => {}, 3000);
+          setTimeout(() => tg?.close(), 3000);
         } catch (e) {
           showErr(err, "Ошибка: " + e.message + ". Попробуйте ещё раз.");
           btn.disabled = false;
@@ -2001,6 +2076,67 @@
         if (consentGiven) box.classList.add("checked");
         else box.classList.remove("checked");
       }
+
+      // ── МОИ ЗАПИСИ INLINE ──────────────────────────────────────
+      let myBookingsInlineOpen = false;
+
+      function toggleMyBookingsInline() {
+        const block = document.getElementById("myBookingsInline");
+        myBookingsInlineOpen = !myBookingsInlineOpen;
+        if (myBookingsInlineOpen) {
+          block.classList.add("open");
+          loadMyBookingsInline();
+        } else {
+          block.classList.remove("open");
+        }
+      }
+
+      async function loadMyBookingsInline() {
+        const phone = document
+          .getElementById("phoneInput")
+          .value.replace(/\D/g, "");
+        const result = document.getElementById("mbInlineResult");
+        if (phone.length < 11) {
+          result.innerHTML =
+            '<div class="mb-empty">Введите телефон выше, чтобы увидеть записи</div>';
+          return;
+        }
+        result.innerHTML =
+          '<div class="mb-loading"><span class="pulse">Ищем записи...</span></div>';
+        try {
+          const res = await fetch(MY_BOOKINGS_URL + "?phone=" + phone, {
+            signal: AbortSignal.timeout(5000),
+          });
+          const data = await res.json();
+          const items = data.bookings || data.records || data || [];
+          if (!Array.isArray(items) || !items.length) {
+            result.innerHTML = '<div class="mb-empty">Записей не найдено</div>';
+            return;
+          }
+          result.innerHTML = items
+            .map(
+              (b) => `
+            <div class="mb-item">
+              <div class="mb-item-top">
+                <span class="mb-item-date">${b.date || ""} ${b.time || ""}</span>
+                <span class="mb-item-master">${b.master || ""}</span>
+              </div>
+              <div class="mb-item-svc">${b.service || ""}</div>
+            </div>`,
+            )
+            .join("");
+        } catch {
+          result.innerHTML =
+            '<div class="mb-empty">Не удалось загрузить записи</div>';
+        }
+      }
+
+      // Обновляем записи при изменении телефона (если блок открыт)
+      document
+        .getElementById("phoneInput")
+        .addEventListener("change", function () {
+          if (myBookingsInlineOpen) loadMyBookingsInline();
+        });
 
       function showErr(el, msg) {
         el.textContent = msg;
