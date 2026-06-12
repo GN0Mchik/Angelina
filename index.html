@@ -2103,9 +2103,15 @@
         result.innerHTML =
           '<div class="mb-loading"><span class="pulse">Ищем записи...</span></div>';
         try {
-          const res = await fetch(MY_BOOKINGS_URL + "?phone=" + phone, {
-            signal: AbortSignal.timeout(5000),
-          });
+          const masterFilter = master
+            ? "&master=" + encodeURIComponent(master.name)
+            : "";
+          const res = await fetch(
+            MY_BOOKINGS_URL + "?phone=" + phone + masterFilter,
+            {
+              signal: AbortSignal.timeout(5000),
+            },
+          );
           const data = await res.json();
           const items = data.bookings || data.records || data || [];
           if (!Array.isArray(items) || !items.length) {
@@ -2117,10 +2123,11 @@
               (b) => `
             <div class="mb-item">
               <div class="mb-item-top">
-                <span class="mb-item-date">${b.Date || b.date || ""} ${b.Time || b.time || ""}</span>
+                <span class="mb-item-date">📅 ${b.Date || b.date || "—"}</span>
                 <span class="mb-item-master">${b.master === "Ольга" ? "💅 Ольга" : b.master === "Ангелина" ? "✨ Ангелина" : b.master || ""}</span>
               </div>
-              <div class="mb-item-svc">${b.Service || b.service || ""}</div>
+              <div style="font-size:13px;color:rgba(220,170,185,.6);margin:3px 0">🕐 ${b.Time || b.time || "—"}</div>
+              <div class="mb-item-svc">🧾 ${b.Service || b.service || "—"}</div>
             </div>`,
             )
             .join("");
