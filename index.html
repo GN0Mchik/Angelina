@@ -1060,7 +1060,15 @@
               </div>
               <button
                 id="manualPayBtn"
+                class="btn"
+                style="display: none; margin-top: 8px"
+                onclick="goStep('s4')"
+              >
+                ✓ Оплата прошла, продолжить
+              </button>
+              <button
                 class="btn-ghost"
+                style="margin-top: 8px"
                 onclick="cancelWaiting()"
               >
                 ← Отмена
@@ -1781,10 +1789,6 @@
         document.getElementById("payBefore").style.display = "none";
         document.getElementById("payWaiting").style.display = "block";
 
-        // Убираем кнопку "Оплатил" — переход только автоматически
-        const manualBtn = document.getElementById("manualPayBtn");
-        if (manualBtn) manualBtn.style.display = "none";
-
         try {
           const res = await fetch(PAYMENT.createUrl, {
             method: "POST",
@@ -1805,18 +1809,21 @@
               master: master.name,
             }),
           });
-          const data = await res.json();
-          if (!data.payment_url || !data.payment_id)
+          const pdata = await res.json();
+          if (!pdata.payment_url || !pdata.payment_id)
             throw new Error("Нет ссылки на оплату");
 
-          paymentId = data.payment_id;
+          paymentId = pdata.payment_id;
 
           // Открываем страницу оплаты
-          if (tg && tg.openLink) tg.openLink(data.payment_url);
-          else window.open(data.payment_url, "_blank");
+          if (tg && tg.openLink) tg.openLink(pdata.payment_url);
+          else window.open(pdata.payment_url, "_blank");
 
-          // Запускаем автоматическую проверку оплаты каждые 3 секунды
+          // 1. Полинг каждые 3 сек через webhook проверки
           startPaymentPolling();
+
+          // 2. Когда пользователь вернётся — дополнительная проверка
+          document.addEventListener("visibilitychange", onReturnedFromPayment);
         } catch (e) {
           console.error("Payment error:", e);
           document.getElementById("payBefore").style.display = "block";
@@ -1831,7 +1838,6 @@
         paymentPollInterval = setInterval(async () => {
           attempts++;
           if (attempts > 40) {
-            // 2 минуты максимум
             clearInterval(paymentPollInterval);
             return;
           }
@@ -1842,12 +1848,41 @@
             const result = await res.json();
             if (result.paid) {
               clearInterval(paymentPollInterval);
-              goStep("s4"); // Переходим к подтверждению только после оплаты
+              document.removeEventListener(
+                "visibilitychange",
+                onReturnedFromPayment,
+              );
+              goStep("s4");
             }
-          } catch (e) {
-            /* тихо игнорируем ошибки проверки */
-          }
+          } catch (e) {}
         }, 3000);
+      }
+
+      async function onReturnedFromPayment() {
+        if (document.visibilityState !== "visible") return;
+        document.removeEventListener("visibilitychange", onReturnedFromPayment);
+
+        // Ждём 2 сек чтобы ЮKassa успела отправить webhook в n8n
+        await new Promise((r) => setTimeout(r, 2000));
+
+        // Проверяем статус напрямую
+        if (paymentId && PAYMENT.checkUrl) {
+          try {
+            const res = await fetch(
+              PAYMENT.checkUrl + "?payment_id=" + paymentId,
+            );
+            const result = await res.json();
+            if (result.paid) {
+              clearInterval(paymentPollInterval);
+              goStep("s4");
+              return;
+            }
+          } catch (e) {}
+        }
+
+        // Если проверка не прошла — показываем кнопку ручного подтверждения
+        const manualBtn = document.getElementById("manualPayBtn");
+        if (manualBtn) manualBtn.style.display = "block";
       }
 
       function onReturnFromPayment() {
