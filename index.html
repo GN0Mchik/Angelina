@@ -1171,10 +1171,10 @@
               <button
                 id="manualPayBtn"
                 class="btn"
-                style="margin-top: 4px; display: none"
+                style="margin-top: 4px"
                 onclick="goStep('s4')"
               >
-                ✓ Оплата прошла, продолжить
+                ✓ Я оплатил — продолжить
               </button>
               <button
                 class="btn-ghost"
@@ -1991,10 +1991,8 @@
       async function onReturnedFromPayment() {
         if (document.visibilityState !== "visible") return;
         document.removeEventListener("visibilitychange", onReturnedFromPayment);
-        clearInterval(paymentPollInterval);
-        // Автопереход через 1.5 сек после возврата
-        await new Promise((r) => setTimeout(r, 1500));
-        goStep("s4");
+        // Показываем кнопку, не переходим автоматически
+        showManualPayBtn();
       }
 
       function cancelWaiting() {
@@ -2105,7 +2103,8 @@
         result.innerHTML =
           '<div class="mb-loading"><span class="pulse">Ищем записи...</span></div>';
         try {
-          const res = await fetch(MY_BOOKINGS_URL + "?phone=" + phone, {
+          const masterFilter = master ? "&master=" + encodeURIComponent(master.name) : "";
+          const res = await fetch(MY_BOOKINGS_URL + "?phone=" + phone + masterFilter, {
             signal: AbortSignal.timeout(5000),
           });
           const data = await res.json();
@@ -2119,10 +2118,10 @@
               (b) => `
             <div class="mb-item">
               <div class="mb-item-top">
-                <span class="mb-item-date">${b.date || ""} ${b.time || ""}</span>
+                <span class="mb-item-date">${b.Date || b.date || ""} ${b.Time || b.time || ""}</span>
                 <span class="mb-item-master">${b.master || ""}</span>
               </div>
-              <div class="mb-item-svc">${b.service || ""}</div>
+              <div class="mb-item-svc">${b.Service || b.service || ""}</div>
             </div>`,
             )
             .join("");
