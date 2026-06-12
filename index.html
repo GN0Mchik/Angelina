@@ -1171,10 +1171,10 @@
               <button
                 id="manualPayBtn"
                 class="btn"
-                style="margin-top: 4px"
+                style="margin-top: 4px; display: none"
                 onclick="goStep('s4')"
               >
-                ✓ Я оплатил — продолжить
+                ✓ Оплата прошла, продолжить
               </button>
               <button
                 class="btn-ghost"
@@ -1991,8 +1991,10 @@
       async function onReturnedFromPayment() {
         if (document.visibilityState !== "visible") return;
         document.removeEventListener("visibilitychange", onReturnedFromPayment);
-        // Показываем кнопку, не переходим автоматически
-        showManualPayBtn();
+        clearInterval(paymentPollInterval);
+        // Автопереход через 1.5 сек после возврата
+        await new Promise((r) => setTimeout(r, 1500));
+        goStep("s4");
       }
 
       function cancelWaiting() {
