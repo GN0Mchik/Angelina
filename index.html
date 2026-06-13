@@ -1320,8 +1320,8 @@
           accent: "#8B60CC",
           accent2: "#5A3290",
           hasPrice: true,
-          hasPayment: true,
-          steps: ["Данные", "Услуга", "Дата", "Время", "Аванс", "Запись"],
+          hasPayment: false,
+          steps: ["Данные", "Услуга", "Дата", "Время", "Запись"],
           slotsUrl:
             "https://sicret.space/webhook/aa43c45f-2f99-4a83-b246-7b9a0c3f2d65",
           bookingUrl:
@@ -2122,12 +2122,10 @@
             .map(
               (b) => `
             <div class="mb-item">
-              <div class="mb-item-top">
-                <span class="mb-item-date">📅 ${b.Date || b.date || "—"}</span>
-                <span class="mb-item-master">${b.master === "Ольга" ? "💅 Ольга" : b.master === "Ангелина" ? "✨ Ангелина" : b.master || ""}</span>
-              </div>
-              <div style="font-size:13px;color:rgba(220,170,185,.6);margin:3px 0">🕐 ${b.Time || b.time || "—"}</div>
-              <div class="mb-item-svc">🧾 ${b.Service || b.service || "—"}</div>
+              <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(220,170,185,.35);margin-bottom:8px">${b.master === "Ольга" ? "💅 Ольга · Маникюр" : b.master === "Ангелина" ? "✨ Ангелина · Ресницы" : b.master || ""}</div>
+              <div style="font-size:14px;font-weight:300;color:#f2dde4;margin-bottom:5px">📅 ${b.Date || b.date || "—"}</div>
+              <div style="font-size:13px;color:rgba(220,170,185,.6);margin-bottom:5px">🕐 ${b.Time || b.time || "—"}</div>
+              <div style="font-size:12px;color:rgba(220,170,185,.45)">🧾 ${b.Service || b.service || "—"}</div>
             </div>`,
             )
             .join("");
