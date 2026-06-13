@@ -278,11 +278,30 @@
         transform: translateX(4px);
       }
 
+      /* Top bar — содержит тумблер на главном экране */
+      .top-bar {
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 0 2px;
+        margin-bottom: 6px;
+        min-height: 32px;
+      }
+
       /* Progress */
       .progress-wrap {
         margin-bottom: 16px;
         width: 100%;
         max-width: 400px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .progress-content {
+        flex: 1;
+        min-width: 0;
       }
       .progress-track {
         height: 2px;
@@ -785,13 +804,10 @@
 
       /* ── THEME TOGGLE BUTTON ── */
       .theme-toggle {
-        position: fixed;
-        top: 14px;
-        right: 16px;
-        z-index: 200;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
         user-select: none;
+        flex-shrink: 0;
       }
       .toggle-track {
         width: 48px;
@@ -1302,24 +1318,28 @@
     <div class="orb o3"></div>
 
     <!-- ═══ THEME TOGGLE ══════════════════════════════════════ -->
-    <div
-      class="theme-toggle"
-      id="themeToggle"
-      onclick="toggleTheme()"
-      title="Сменить тему"
-    >
-      <div class="toggle-track">
-        <div class="toggle-thumb">
-          <span class="thumb-icon thumb-night">☽</span>
-          <span class="thumb-icon thumb-day">✦</span>
-        </div>
-      </div>
-    </div>
 
     <div class="page">
+      <!-- Верхняя строка с тумблером (главный экран) -->
+      <div class="top-bar" id="topBarS0">
+        <div
+          class="theme-toggle"
+          id="themeToggle"
+          onclick="toggleTheme()"
+          title="Сменить тему"
+        >
+          <div class="toggle-track">
+            <div class="toggle-thumb">
+              <span class="thumb-icon thumb-night">☽</span>
+              <span class="thumb-icon thumb-day">✦</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ═══ ЭКРАН 0: Выбор мастера ═══════════════════════════════ -->
       <div class="screen active" id="s0">
-        <div style="height: 15vh; min-height: 40px"></div>
+        <div style="height: 12vh; min-height: 30px"></div>
         <div class="card" style="width: 100%; max-width: 400px">
           <div class="studio-title">Nails & Lash</div>
           <div class="studio-name">Studio</div>
@@ -1350,10 +1370,25 @@
       <!-- ═══ БРОНИРОВАНИЕ ════════════════════════════════════════ -->
       <div id="bWrap" style="display: none; width: 100%; max-width: 400px">
         <div class="progress-wrap">
-          <div class="progress-track">
-            <div class="progress-fill" id="pFill" style="width: 0%"></div>
+          <div class="progress-content">
+            <div class="progress-track">
+              <div class="progress-fill" id="pFill" style="width: 0%"></div>
+            </div>
+            <div class="step-labels" id="stepLabels"></div>
           </div>
-          <div class="step-labels" id="stepLabels"></div>
+          <!-- Тумблер встроен в строку прогресса -->
+          <div
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            title="Сменить тему"
+          >
+            <div class="toggle-track">
+              <div class="toggle-thumb">
+                <span class="thumb-icon thumb-night">☽</span>
+                <span class="thumb-icon thumb-day">✦</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -1972,12 +2007,14 @@
 
         document.getElementById("s0").classList.remove("active");
         document.getElementById("bWrap").style.display = "block";
+        document.getElementById("topBarS0").style.display = "none";
         goStep("s1");
       }
 
       function backToMenu() {
         document.getElementById("bWrap").style.display = "none";
         document.getElementById("s0").classList.add("active");
+        document.getElementById("topBarS0").style.display = "flex";
         const isDay = document.body.classList.contains("day-mode");
         document.body.className = "theme-default" + (isDay ? " day-mode" : "");
         curScreenId = "s0";
