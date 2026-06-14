@@ -465,10 +465,18 @@
         transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .theme-nails .progress-fill {
-        background: linear-gradient(90deg, #9c3050, #c8506a);
+        background: linear-gradient(
+          90deg,
+          var(--accent2, #9c3050),
+          var(--accent, #c8506a)
+        );
       }
       .theme-lash .progress-fill {
-        background: linear-gradient(90deg, #5a3290, #8b60cc);
+        background: linear-gradient(
+          90deg,
+          var(--accent2, #5a3290),
+          var(--accent, #8b60cc)
+        );
       }
       .step-labels {
         display: flex;
@@ -952,7 +960,136 @@
           box-shadow 0.55s ease;
       }
 
-      /* ── THEME TOGGLE BUTTON ── */
+      /* ── SPLASH SCREEN ── */
+      .splash {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #110810;
+        cursor: pointer;
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+      .splash.hide {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(1.04);
+      }
+      body.day-mode .splash {
+        background: #d8f2e8;
+      }
+      .splash-logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 52px;
+        font-weight: 300;
+        color: #f0d0e0;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+        opacity: 0;
+        transform: translateY(18px);
+        animation: splashFadeUp 1s ease 0.3s forwards;
+      }
+      body.day-mode .splash-logo {
+        color: #0a2a18;
+      }
+      .splash-sub {
+        font-family: "Jost", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: rgba(180, 100, 130, 0.5);
+        margin-bottom: 60px;
+        opacity: 0;
+        transform: translateY(12px);
+        animation: splashFadeUp 1s ease 0.55s forwards;
+      }
+      body.day-mode .splash-sub {
+        color: rgba(20, 110, 75, 0.5);
+      }
+      .splash-tap {
+        font-family: "Jost", sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(180, 100, 130, 0.35);
+        opacity: 0;
+        animation: splashPulse 2s ease 1.2s infinite;
+      }
+      body.day-mode .splash-tap {
+        color: rgba(20, 110, 75, 0.4);
+      }
+      .splash-line {
+        width: 40px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(180, 100, 130, 0.4),
+          transparent
+        );
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: splashFadeUp 1s ease 0.8s forwards;
+      }
+      body.day-mode .splash-line {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(28, 160, 110, 0.5),
+          transparent
+        );
+      }
+      @keyframes splashFadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes splashPulse {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* ── RETURN TO MENU BUTTON ── */
+      .btn-home {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(240, 210, 225, 0.6);
+        font-family: "Jost", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+      }
+      .btn-home:active {
+        transform: scale(0.98);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      body.day-mode .btn-home {
+        border-color: rgba(18, 130, 85, 0.28);
+        background: rgba(18, 130, 85, 0.1);
+        color: rgba(8, 50, 25, 0.65);
+      }
+
       .theme-toggle {
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
@@ -1011,15 +1148,15 @@
 
       /* DAY track */
       body.day-mode .toggle-track {
-        background: rgba(200, 80, 120, 0.14);
-        border-color: rgba(200, 80, 120, 0.28);
-        box-shadow: 0 2px 10px rgba(180, 60, 100, 0.12) inset;
+        background: rgba(18, 130, 85, 0.18);
+        border-color: rgba(18, 130, 85, 0.35);
+        box-shadow: 0 2px 10px rgba(12, 100, 65, 0.15) inset;
       }
       /* DAY thumb */
       body.day-mode .toggle-thumb {
         transform: translateX(22px);
-        background: rgba(200, 80, 120, 0.22);
-        border-color: rgba(200, 80, 120, 0.4);
+        background: rgba(18, 130, 85, 0.28);
+        border-color: rgba(18, 130, 85, 0.5);
       }
       body.day-mode .thumb-night {
         opacity: 0;
@@ -1028,313 +1165,332 @@
       body.day-mode .thumb-day {
         opacity: 1;
         transform: scale(1);
-        color: rgba(100, 20, 40, 0.7);
+        color: rgba(8, 50, 25, 0.75);
       }
 
       /* ── DAY MODE ── */
       body.day-mode {
-        background: #eed5dc;
-        color: #2a0d18;
+        background: #b8deca;
+        color: #082018;
       }
 
-      /* Орбы — насыщеннее */
+      /* Орбы — мятные */
       body.day-mode .o1 {
-        filter: blur(90px);
-        opacity: 0.55;
+        filter: blur(80px);
+        opacity: 0.88;
       }
       body.day-mode .o2 {
-        filter: blur(90px);
-        opacity: 0.5;
+        filter: blur(80px);
+        opacity: 0.82;
       }
       body.day-mode .o3 {
-        filter: blur(80px);
-        opacity: 0.42;
+        filter: blur(72px);
+        opacity: 0.72;
       }
 
-      /* DEFAULT — тёплый розовый */
+      /* DEFAULT — изумрудный */
       body.day-mode.theme-default .o1 {
         background: radial-gradient(
           circle,
-          rgba(218, 92, 135, 0.74) 0%,
-          rgba(200, 68, 108, 0.42) 50%,
+          rgba(18, 130, 85, 0.9) 0%,
+          rgba(12, 100, 65, 0.55) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-default .o2 {
         background: radial-gradient(
           circle,
-          rgba(182, 62, 105, 0.63) 0%,
-          rgba(155, 42, 82, 0.36) 50%,
+          rgba(14, 110, 72, 0.8) 0%,
+          rgba(10, 85, 55, 0.48) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-default .o3 {
         background: radial-gradient(
           circle,
-          rgba(218, 92, 135, 0.68) 0%,
+          rgba(25, 150, 100, 0.82) 0%,
           transparent 70%
         );
       }
 
-      /* NAILS (Ольга) — малиново-розовый */
+      /* NAILS (Ольга) — тёплый изумруд */
       body.day-mode.theme-nails .o1 {
         background: radial-gradient(
           circle,
-          rgba(214, 72, 108, 0.84) 0%,
-          rgba(190, 48, 80, 0.48) 50%,
+          rgba(15, 120, 75, 0.92) 0%,
+          rgba(10, 90, 55, 0.58) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-nails .o2 {
         background: radial-gradient(
           circle,
-          rgba(178, 48, 82, 0.72) 0%,
-          rgba(148, 32, 60, 0.44) 50%,
+          rgba(12, 100, 65, 0.82) 0%,
+          rgba(8, 75, 45, 0.5) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-nails .o3 {
         background: radial-gradient(
           circle,
-          rgba(214, 72, 108, 0.75) 0%,
+          rgba(20, 140, 90, 0.85) 0%,
           transparent 70%
         );
       }
 
-      /* LASH (Ангелина) — лавандово-фиолетовый */
+      /* LASH (Ангелина) — холодный мятно-бирюзовый */
       body.day-mode.theme-lash .o1 {
         background: radial-gradient(
           circle,
-          rgba(180, 85, 195, 0.78) 0%,
-          rgba(148, 58, 165, 0.48) 50%,
+          rgba(12, 115, 105, 0.9) 0%,
+          rgba(8, 88, 80, 0.55) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-lash .o2 {
         background: radial-gradient(
           circle,
-          rgba(205, 82, 148, 0.7) 0%,
-          rgba(172, 55, 118, 0.44) 50%,
+          rgba(16, 130, 120, 0.82) 0%,
+          rgba(10, 100, 92, 0.5) 50%,
           transparent 70%
         );
       }
       body.day-mode.theme-lash .o3 {
         background: radial-gradient(
           circle,
-          rgba(180, 85, 195, 0.72) 0%,
+          rgba(20, 145, 135, 0.85) 0%,
           transparent 70%
         );
       }
 
       body.day-mode .card {
-        background: rgba(236, 208, 215, 0.58);
-        border-color: rgba(200, 95, 115, 0.28);
+        background: rgba(148, 210, 180, 0.58);
+        border-color: rgba(18, 130, 85, 0.28);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         box-shadow:
-          0 28px 56px rgba(0, 0, 0, 0.5),
-          0 0 32px 7px rgba(210, 80, 120, 0.032),
-          0 0 72px 15px rgba(210, 80, 120, 0.016),
-          0 0 120px 24px rgba(210, 80, 120, 0.008);
+          0 28px 56px rgba(0, 0, 0, 0.08),
+          0 0 32px 7px rgba(28, 160, 110, 0.04),
+          0 0 72px 15px rgba(28, 160, 110, 0.02);
       }
       body.day-mode.theme-nails .card,
       body.day-mode.theme-lash .card {
         box-shadow:
-          0 28px 56px rgba(0, 0, 0, 0.5),
-          0 0 32px 7px rgba(210, 80, 120, 0.032),
-          0 0 72px 15px rgba(210, 80, 120, 0.016),
-          0 0 120px 24px rgba(210, 80, 120, 0.008);
+          0 28px 56px rgba(0, 0, 0, 0.08),
+          0 0 32px 7px rgba(28, 160, 110, 0.04),
+          0 0 72px 15px rgba(28, 160, 110, 0.02);
       }
       body.day-mode .studio-title {
-        color: rgba(80, 25, 45, 0.45);
+        color: rgba(10, 60, 35, 0.42);
       }
       body.day-mode .studio-name {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .studio-sub {
-        color: rgba(80, 25, 45, 0.35);
+        color: rgba(10, 60, 35, 0.32);
       }
       body.day-mode .sdiv {
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(210, 100, 120, 0.48),
+          rgba(28, 160, 110, 0.45),
           transparent
         );
       }
       body.day-mode .master-card {
-        background: rgba(222, 188, 196, 0.55);
-        border-color: rgba(200, 90, 130, 0.24);
-        color: #2a0d18;
+        background: rgba(140, 210, 175, 0.55);
+        border-color: rgba(18, 130, 85, 0.3);
+        color: #082018;
       }
       body.day-mode .master-card.nails:active {
-        background: rgba(215, 75, 110, 0.18);
-        border-color: rgba(215, 75, 110, 0.5);
+        background: rgba(15, 120, 75, 0.22);
+        border-color: rgba(15, 120, 75, 0.55);
       }
       body.day-mode .master-card.lash:active {
-        background: rgba(160, 80, 200, 0.18);
-        border-color: rgba(160, 80, 200, 0.5);
+        background: rgba(12, 115, 105, 0.22);
+        border-color: rgba(12, 115, 105, 0.55);
       }
       body.day-mode .mc-svc {
-        color: rgba(80, 25, 45, 0.6);
+        color: rgba(10, 60, 35, 0.55);
       }
       body.day-mode .mc-name {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .mc-arrow {
-        color: rgba(80, 25, 45, 0.28);
+        color: rgba(10, 60, 35, 0.28);
       }
       body.day-mode .badge {
-        background: rgba(222, 188, 196, 0.5);
-        border-color: rgba(200, 90, 130, 0.22);
+        background: rgba(140, 210, 175, 0.52);
+        border-color: rgba(18, 130, 85, 0.28);
       }
       body.day-mode .btxt {
-        color: rgba(80, 25, 45, 0.5);
+        color: rgba(10, 60, 35, 0.5);
       }
       body.day-mode .stitle {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .ssub {
-        color: rgba(80, 25, 45, 0.42);
+        color: rgba(10, 60, 35, 0.42);
       }
       body.day-mode .sline {
         opacity: 0.5;
       }
       body.day-mode label {
-        color: rgba(80, 25, 45, 0.42);
+        color: rgba(10, 60, 35, 0.42);
       }
       body.day-mode input {
-        background: rgba(228, 200, 208, 0.78);
-        border-color: rgba(200, 90, 130, 0.25);
-        color: #2a0d18;
+        background: rgba(145, 205, 175, 0.72);
+        border-color: rgba(18, 130, 85, 0.28);
+        color: #0a2a18;
       }
       body.day-mode input::placeholder {
-        color: rgba(80, 25, 45, 0.22);
+        color: rgba(10, 60, 35, 0.22);
       }
       body.day-mode input:focus {
-        background: rgba(238, 210, 216, 0.95);
-        border-color: var(--accent, #c8506a);
+        background: rgba(200, 245, 225, 0.9);
+        border-color: var(--accent, #1d9e75);
         box-shadow: 0 0 0 3px
-          color-mix(in srgb, var(--accent, #c8506a) 14%, transparent);
+          color-mix(in srgb, var(--accent, #1d9e75) 14%, transparent);
       }
       body.day-mode .svc-card {
-        background: rgba(222, 188, 196, 0.48);
-        border-color: rgba(200, 90, 130, 0.2);
+        background: rgba(138, 208, 172, 0.48);
+        border-color: rgba(18, 130, 85, 0.22);
       }
       body.day-mode .svc-card.selected,
       body.day-mode .svc-card:active {
         background: color-mix(
           in srgb,
-          var(--accent, #c8506a) 16%,
-          rgba(232, 200, 208, 1)
+          var(--accent, #1d9e75) 16%,
+          rgba(185, 235, 215, 1)
         );
-        border-color: var(--accent, #c8506a);
+        border-color: var(--accent, #1d9e75);
       }
       body.day-mode .svc-name {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .svc-desc {
-        color: rgba(80, 25, 45, 0.5);
+        color: rgba(10, 60, 35, 0.5);
       }
       body.day-mode .date-btn {
-        background: rgba(222, 188, 196, 0.48);
-        border-color: rgba(200, 90, 130, 0.2);
-        color: #2a0d18;
+        background: rgba(138, 208, 172, 0.48);
+        border-color: rgba(18, 130, 85, 0.22);
+        color: #082018;
       }
       body.day-mode .date-btn.selected {
         background: color-mix(
           in srgb,
-          var(--accent, #c8506a) 18%,
-          rgba(232, 200, 208, 1)
+          var(--accent, #1d9e75) 18%,
+          rgba(185, 235, 215, 1)
         );
-        border-color: var(--accent, #c8506a);
+        border-color: var(--accent, #1d9e75);
       }
       body.day-mode .d-name {
-        color: rgba(80, 25, 45, 0.38);
+        color: rgba(10, 60, 35, 0.38);
       }
       body.day-mode .d-month {
-        color: rgba(80, 25, 45, 0.5);
+        color: rgba(10, 60, 35, 0.5);
       }
       body.day-mode .time-btn {
-        background: rgba(222, 188, 196, 0.48);
-        border-color: rgba(200, 90, 130, 0.2);
-        color: #2a0d18;
+        background: rgba(138, 208, 172, 0.48);
+        border-color: rgba(18, 130, 85, 0.22);
+        color: #082018;
       }
       body.day-mode .time-btn.selected {
         background: color-mix(
           in srgb,
-          var(--accent, #c8506a) 20%,
-          rgba(232, 200, 208, 1)
+          var(--accent, #1d9e75) 20%,
+          rgba(185, 235, 215, 1)
         );
-        border-color: var(--accent, #c8506a);
+        border-color: var(--accent, #1d9e75);
       }
       body.day-mode .crow {
-        border-bottom-color: rgba(80, 25, 45, 0.08);
+        border-bottom-color: rgba(10, 60, 35, 0.08);
       }
       body.day-mode .cl {
-        color: rgba(80, 25, 45, 0.32);
+        color: rgba(10, 60, 35, 0.32);
       }
       body.day-mode .cv {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .stit {
-        color: #2a0d18;
+        color: #0a2a18;
       }
       body.day-mode .ssub2 {
-        color: rgba(80, 25, 45, 0.5);
+        color: rgba(10, 60, 35, 0.5);
       }
       body.day-mode .progress-track {
-        background: rgba(200, 90, 130, 0.12);
+        background: rgba(28, 160, 110, 0.12);
       }
       body.day-mode .sdot {
-        color: rgba(80, 25, 45, 0.28);
+        color: rgba(10, 60, 35, 0.28);
       }
       body.day-mode .sdot.done {
-        color: rgba(80, 25, 45, 0.32);
+        color: rgba(10, 60, 35, 0.32);
       }
       body.day-mode .btn-ghost {
-        color: rgba(80, 25, 45, 0.35);
-        border-color: rgba(80, 25, 45, 0.14);
+        color: rgba(10, 60, 35, 0.35);
+        border-color: rgba(10, 60, 35, 0.14);
       }
       body.day-mode .footer {
-        color: rgba(80, 25, 45, 0.35);
+        color: rgba(10, 60, 35, 0.3);
       }
       body.day-mode .my-bookings-inline {
-        border-color: rgba(200, 90, 130, 0.2);
-        background: rgba(216, 182, 190, 0.48);
+        border-color: rgba(18, 130, 85, 0.22);
+        background: rgba(130, 200, 165, 0.48);
       }
       body.day-mode .my-bookings-title {
-        color: rgba(80, 25, 45, 0.5);
+        color: rgba(10, 60, 35, 0.5);
       }
       body.day-mode .my-bookings-chevron {
-        color: rgba(80, 25, 45, 0.32);
+        color: rgba(10, 60, 35, 0.32);
       }
       body.day-mode .mb-item {
-        background: rgba(220, 186, 194, 0.6);
-        border-color: rgba(200, 90, 130, 0.18);
+        background: rgba(145, 210, 180, 0.62);
+        border-color: rgba(18, 130, 85, 0.2);
       }
       body.day-mode .mb-empty {
-        color: rgba(80, 25, 45, 0.32);
+        color: rgba(10, 60, 35, 0.32);
       }
       body.day-mode .no-slots {
-        color: rgba(80, 25, 45, 0.38);
+        color: rgba(10, 60, 35, 0.38);
       }
       body.day-mode .slots-loading {
-        color: rgba(80, 25, 45, 0.35);
+        color: rgba(10, 60, 35, 0.35);
       }
       body.day-mode .consent-text {
-        color: rgba(80, 25, 45, 0.55);
+        color: rgba(10, 60, 35, 0.55);
       }
       body.day-mode .consent-box {
-        background: rgba(228, 198, 206, 0.85);
-        border-color: rgba(200, 80, 120, 0.6);
+        background: rgba(150, 215, 185, 0.88);
+        border-color: rgba(15, 120, 78, 0.6);
       }
       body.day-mode .consent-box.checked {
-        background: var(--accent, #c8506a);
+        background: var(--accent, #1d9e75);
       }
       body.day-mode .err {
-        background: rgba(200, 60, 90, 0.09);
-        color: #a01830;
+        background: rgba(200, 60, 60, 0.09);
+        color: #a01818;
+      }
+      body.day-mode .mb-master {
+        color: rgba(10, 60, 35, 0.45);
+      }
+      body.day-mode .mb-date {
+        color: #0a2a18;
+      }
+      body.day-mode .mb-time {
+        color: rgba(10, 60, 35, 0.7);
+      }
+      body.day-mode .mb-svc {
+        color: rgba(10, 60, 35, 0.55);
+      }
+      body.day-mode .pay-label {
+        color: rgba(10, 60, 35, 0.45);
+      }
+      body.day-mode .pay-hint {
+        color: rgba(10, 60, 35, 0.55);
+      }
+      body.day-mode .pay-wait-text {
+        color: rgba(10, 60, 35, 0.5);
       }
 
       /* ── CHECKBOX СОГЛАСИЕ ── */
@@ -1543,6 +1699,14 @@
     </style>
   </head>
   <body class="theme-default">
+    <!-- ═══ SPLASH SCREEN ═════════════════════════════════════ -->
+    <div class="splash" id="splash" onclick="hideSplash()">
+      <div class="splash-logo">Studio</div>
+      <div class="splash-sub">Nails &amp; Lash</div>
+      <div class="splash-line"></div>
+      <div class="splash-tap">Нажмите чтобы начать</div>
+    </div>
+
     <div class="orb o1"></div>
     <div class="orb o2"></div>
     <div class="orb o3"></div>
@@ -1930,6 +2094,13 @@
                 Запись подтверждена.<br /><span id="sMaster"></span> скоро
                 напишет вам 🌸
               </div>
+              <button
+                class="btn-home"
+                onclick="backToMenu()"
+                style="margin-top: 24px"
+              >
+                ← В главное меню
+              </button>
             </div>
           </div>
         </div>
@@ -1940,6 +2111,13 @@
     <!-- /page -->
 
     <script>
+      // ── SPLASH SCREEN ─────────────────────────────────────────
+      function hideSplash() {
+        const s = document.getElementById("splash");
+        s.classList.add("hide");
+        setTimeout(() => (s.style.display = "none"), 700);
+      }
+
       // ──────────────────────────────────────────────────────────────
       // CONFIG — вставь Production URLs из n8n
       // ──────────────────────────────────────────────────────────────
@@ -2151,15 +2329,32 @@
       function applyTheme(m) {
         const isDay = document.body.classList.contains("day-mode");
         document.body.className = m.theme + (isDay ? " day-mode" : "");
-        document.documentElement.style.setProperty("--accent", m.accent);
-        document.documentElement.style.setProperty("--accent2", m.accent2);
+        // В дневной теме у каждого мастера свой зелёный акцент
+        let accent, accent2;
+        if (isDay) {
+          if (m.theme === "theme-nails") {
+            accent = "#1a7a48"; // тёплый лесной зелёный — Ольга
+            accent2 = "#125c34";
+          } else if (m.theme === "theme-lash") {
+            accent = "#0e7870"; // холодный изумрудно-бирюзовый — Ангелина
+            accent2 = "#095c58";
+          } else {
+            accent = "#0f7848";
+            accent2 = "#0a5c38";
+          }
+        } else {
+          accent = m.accent;
+          accent2 = m.accent2;
+        }
+        document.documentElement.style.setProperty("--accent", accent);
+        document.documentElement.style.setProperty("--accent2", accent2);
         document.documentElement.style.setProperty(
           "--accent-border",
-          m.accent + "44",
+          accent + "44",
         );
         document.documentElement.style.setProperty(
           "--accent-glow",
-          m.accent + "55",
+          accent + "55",
         );
       }
 
@@ -2827,11 +3022,24 @@
           : null;
 
       function applyDayMode(day) {
-        // Preserve current master theme class when toggling
         const themeClass =
           [...document.body.classList].find((c) => c.startsWith("theme-")) ||
           "theme-default";
         document.body.className = themeClass + (day ? " day-mode" : "");
+        // Обновляем акцент при переключении темы
+        if (master) applyTheme(master);
+        else {
+          const accent = day ? "#0f7848" : "#C8506A";
+          document.documentElement.style.setProperty("--accent", accent);
+          document.documentElement.style.setProperty(
+            "--accent-border",
+            accent + "44",
+          );
+          document.documentElement.style.setProperty(
+            "--accent-glow",
+            accent + "55",
+          );
+        }
       }
 
       function toggleTheme() {
