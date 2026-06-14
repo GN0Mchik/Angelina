@@ -53,34 +53,24 @@
         z-index: 0;
         transition: all 1s ease;
       }
-      /* Орбы по центрам всех 4 сторон */
       .o1 {
-        width: 500px;
-        height: 500px;
-        top: -220px;
-        left: 50%;
-        transform: translateX(-50%);
+        width: 400px;
+        height: 400px;
+        top: -120px;
+        left: -120px;
       }
       .o2 {
-        width: 500px;
-        height: 500px;
-        bottom: -220px;
-        left: 50%;
-        transform: translateX(-50%);
+        width: 300px;
+        height: 300px;
+        bottom: -80px;
+        right: -80px;
       }
       .o3 {
-        width: 380px;
-        height: 380px;
-        top: 50%;
-        left: -160px;
-        transform: translateY(-50%);
-      }
-      .o4 {
-        width: 380px;
-        height: 380px;
-        top: 50%;
-        right: -160px;
-        transform: translateY(-50%);
+        width: 180px;
+        height: 180px;
+        top: 40%;
+        left: 40%;
+        transform: translate(-50%, -50%);
       }
       body.theme-nails .o1 {
         background: radial-gradient(
@@ -97,13 +87,6 @@
         );
       }
       body.theme-nails .o3 {
-        background: radial-gradient(
-          circle,
-          rgba(180, 50, 80, 0.5) 0%,
-          transparent 70%
-        );
-      }
-      body.theme-nails .o4 {
         background: radial-gradient(
           circle,
           rgba(180, 50, 80, 0.5) 0%,
@@ -131,13 +114,6 @@
           transparent 70%
         );
       }
-      body.theme-lash .o4 {
-        background: radial-gradient(
-          circle,
-          rgba(90, 50, 140, 0.5) 0%,
-          transparent 70%
-        );
-      }
       body.theme-default .o1 {
         background: radial-gradient(
           circle,
@@ -153,13 +129,6 @@
         );
       }
       body.theme-default .o3 {
-        background: radial-gradient(
-          circle,
-          rgba(140, 40, 90, 0.38) 0%,
-          transparent 70%
-        );
-      }
-      body.theme-default .o4 {
         background: radial-gradient(
           circle,
           rgba(140, 40, 90, 0.38) 0%,
@@ -1070,16 +1039,16 @@
 
       /* Орбы — насыщеннее */
       body.day-mode .o1 {
-        filter: blur(80px);
-        opacity: 0.82;
+        filter: blur(90px);
+        opacity: 0.55;
       }
       body.day-mode .o2 {
-        filter: blur(80px);
-        opacity: 0.78;
+        filter: blur(90px);
+        opacity: 0.5;
       }
       body.day-mode .o3 {
-        filter: blur(70px);
-        opacity: 0.72;
+        filter: blur(80px);
+        opacity: 0.42;
       }
 
       /* DEFAULT — тёплый розовый */
@@ -1100,13 +1069,6 @@
         );
       }
       body.day-mode.theme-default .o3 {
-        background: radial-gradient(
-          circle,
-          rgba(218, 92, 135, 0.68) 0%,
-          transparent 70%
-        );
-      }
-      body.day-mode.theme-default .o4 {
         background: radial-gradient(
           circle,
           rgba(218, 92, 135, 0.68) 0%,
@@ -1138,13 +1100,6 @@
           transparent 70%
         );
       }
-      body.day-mode.theme-nails .o4 {
-        background: radial-gradient(
-          circle,
-          rgba(214, 72, 108, 0.75) 0%,
-          transparent 70%
-        );
-      }
 
       /* LASH (Ангелина) — лавандово-фиолетовый */
       body.day-mode.theme-lash .o1 {
@@ -1164,13 +1119,6 @@
         );
       }
       body.day-mode.theme-lash .o3 {
-        background: radial-gradient(
-          circle,
-          rgba(180, 85, 195, 0.72) 0%,
-          transparent 70%
-        );
-      }
-      body.day-mode.theme-lash .o4 {
         background: radial-gradient(
           circle,
           rgba(180, 85, 195, 0.72) 0%,
@@ -1598,7 +1546,6 @@
     <div class="orb o1"></div>
     <div class="orb o2"></div>
     <div class="orb o3"></div>
-    <div class="orb o4"></div>
 
     <!-- ═══ THEME TOGGLE ══════════════════════════════════════ -->
 
