@@ -53,24 +53,34 @@
         z-index: 0;
         transition: all 1s ease;
       }
+      /* Орбы по центрам всех 4 сторон */
       .o1 {
-        width: 200px;
-        height: 200px;
-        top: -55px;
-        left: -55px;
+        width: 500px;
+        height: 500px;
+        top: -220px;
+        left: 50%;
+        transform: translateX(-50%);
       }
       .o2 {
-        width: 155px;
-        height: 155px;
-        bottom: -40px;
-        right: -40px;
+        width: 500px;
+        height: 500px;
+        bottom: -220px;
+        left: 50%;
+        transform: translateX(-50%);
       }
       .o3 {
-        width: 95px;
-        height: 95px;
-        top: 40%;
-        left: 40%;
-        transform: translate(-50%, -50%);
+        width: 380px;
+        height: 380px;
+        top: 50%;
+        left: -160px;
+        transform: translateY(-50%);
+      }
+      .o4 {
+        width: 380px;
+        height: 380px;
+        top: 50%;
+        right: -160px;
+        transform: translateY(-50%);
       }
       body.theme-nails .o1 {
         background: radial-gradient(
@@ -89,7 +99,14 @@
       body.theme-nails .o3 {
         background: radial-gradient(
           circle,
-          rgba(200, 80, 110, 0.35) 0%,
+          rgba(180, 50, 80, 0.5) 0%,
+          transparent 70%
+        );
+      }
+      body.theme-nails .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(180, 50, 80, 0.5) 0%,
           transparent 70%
         );
       }
@@ -110,7 +127,14 @@
       body.theme-lash .o3 {
         background: radial-gradient(
           circle,
-          rgba(130, 80, 200, 0.35) 0%,
+          rgba(90, 50, 140, 0.5) 0%,
+          transparent 70%
+        );
+      }
+      body.theme-lash .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(90, 50, 140, 0.5) 0%,
           transparent 70%
         );
       }
@@ -131,7 +155,14 @@
       body.theme-default .o3 {
         background: radial-gradient(
           circle,
-          rgba(100, 40, 150, 0.32) 0%,
+          rgba(140, 40, 90, 0.38) 0%,
+          transparent 70%
+        );
+      }
+      body.theme-default .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(140, 40, 90, 0.38) 0%,
           transparent 70%
         );
       }
@@ -160,48 +191,48 @@
       @keyframes neonColorCycle {
         0% {
           box-shadow:
-            inset 0 0 10px 1px rgba(200, 80, 106, 0.18),
-            inset 0 0 22px 2px rgba(200, 80, 106, 0.1),
+            inset 0 0 10px 1px rgba(210, 80, 120, 0.18),
+            inset 0 0 22px 2px rgba(210, 80, 120, 0.1),
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 8px 1px rgba(200, 80, 106, 0.45),
-            0 0 26px 5px rgba(200, 80, 106, 0.22),
-            0 0 55px 10px rgba(200, 80, 106, 0.11);
+            0 0 30px 6px rgba(210, 80, 120, 0.03),
+            0 0 70px 14px rgba(210, 80, 120, 0.015),
+            0 0 120px 24px rgba(210, 80, 120, 0.007);
         }
         25% {
           box-shadow:
-            inset 0 0 14px 2px rgba(200, 80, 106, 0.28),
-            inset 0 0 32px 4px rgba(200, 80, 106, 0.15),
+            inset 0 0 14px 2px rgba(210, 80, 120, 0.28),
+            inset 0 0 32px 4px rgba(210, 80, 120, 0.15),
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 14px 2px rgba(200, 80, 106, 0.62),
-            0 0 38px 7px rgba(200, 80, 106, 0.32),
-            0 0 70px 14px rgba(200, 80, 106, 0.16);
+            0 0 32px 7px rgba(210, 80, 120, 0.038),
+            0 0 72px 15px rgba(210, 80, 120, 0.02),
+            0 0 120px 24px rgba(210, 80, 120, 0.009);
         }
         50% {
           box-shadow:
-            inset 0 0 10px 1px rgba(139, 96, 204, 0.18),
-            inset 0 0 22px 2px rgba(139, 96, 204, 0.1),
+            inset 0 0 10px 1px rgba(210, 80, 120, 0.18),
+            inset 0 0 22px 2px rgba(210, 80, 120, 0.1),
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 8px 1px rgba(139, 96, 204, 0.45),
-            0 0 26px 5px rgba(139, 96, 204, 0.22),
-            0 0 55px 10px rgba(139, 96, 204, 0.11);
+            0 0 30px 6px rgba(210, 80, 120, 0.03),
+            0 0 70px 14px rgba(210, 80, 120, 0.015),
+            0 0 120px 24px rgba(210, 80, 120, 0.007);
         }
         75% {
           box-shadow:
-            inset 0 0 14px 2px rgba(139, 96, 204, 0.28),
-            inset 0 0 32px 4px rgba(139, 96, 204, 0.15),
+            inset 0 0 14px 2px rgba(210, 80, 120, 0.28),
+            inset 0 0 32px 4px rgba(210, 80, 120, 0.15),
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 14px 2px rgba(139, 96, 204, 0.62),
-            0 0 38px 7px rgba(139, 96, 204, 0.32),
-            0 0 70px 14px rgba(139, 96, 204, 0.16);
+            0 0 32px 7px rgba(210, 80, 120, 0.038),
+            0 0 72px 15px rgba(210, 80, 120, 0.02),
+            0 0 120px 24px rgba(210, 80, 120, 0.009);
         }
         100% {
           box-shadow:
-            inset 0 0 10px 1px rgba(200, 80, 106, 0.18),
-            inset 0 0 22px 2px rgba(200, 80, 106, 0.1),
+            inset 0 0 10px 1px rgba(210, 80, 120, 0.18),
+            inset 0 0 22px 2px rgba(210, 80, 120, 0.1),
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 8px 1px rgba(200, 80, 106, 0.45),
-            0 0 26px 5px rgba(200, 80, 106, 0.22),
-            0 0 55px 10px rgba(200, 80, 106, 0.11);
+            0 0 6px 1px rgba(210, 80, 120, 0.22),
+            0 0 16px 3px rgba(210, 80, 120, 0.1),
+            0 0 32px 6px rgba(210, 80, 120, 0.05);
         }
       }
 
@@ -210,23 +241,23 @@
         0% {
           box-shadow:
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 8px 1px var(--accent-glow, rgba(200, 100, 140, 0.4)),
-            0 0 22px 4px var(--accent-border, rgba(200, 100, 140, 0.22)),
-            0 0 50px 8px var(--accent-border, rgba(200, 100, 140, 0.11));
+            0 0 30px 6px rgba(210, 80, 120, 0.03),
+            0 0 70px 14px rgba(210, 80, 120, 0.015),
+            0 0 120px 24px rgba(210, 80, 120, 0.007);
         }
         50% {
           box-shadow:
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 14px 2px var(--accent-glow, rgba(200, 100, 140, 0.62)),
-            0 0 36px 7px var(--accent-border, rgba(200, 100, 140, 0.34)),
-            0 0 70px 14px var(--accent-border, rgba(200, 100, 140, 0.17));
+            0 0 32px 7px rgba(210, 80, 120, 0.038),
+            0 0 72px 15px rgba(210, 80, 120, 0.02),
+            0 0 120px 24px rgba(210, 80, 120, 0.009);
         }
         100% {
           box-shadow:
             0 28px 56px rgba(0, 0, 0, 0.5),
-            0 0 8px 1px var(--accent-glow, rgba(200, 100, 140, 0.4)),
-            0 0 22px 4px var(--accent-border, rgba(200, 100, 140, 0.22)),
-            0 0 50px 8px var(--accent-border, rgba(200, 100, 140, 0.11));
+            0 0 6px 1px var(--accent-glow, rgba(200, 100, 140, 0.2)),
+            0 0 15px 3px var(--accent-border, rgba(200, 100, 140, 0.1)),
+            0 0 30px 6px var(--accent-border, rgba(200, 100, 140, 0.05));
         }
       }
 
@@ -235,37 +266,37 @@
         0% {
           box-shadow:
             0 28px 56px rgba(140, 35, 60, 0.14),
-            0 0 10px 2px rgba(200, 80, 106, 0.26),
-            0 0 26px 5px rgba(200, 80, 106, 0.14),
-            0 0 52px 10px rgba(200, 80, 106, 0.07);
+            0 0 10px 2px rgba(210, 80, 120, 0.26),
+            0 0 26px 5px rgba(210, 80, 120, 0.14),
+            0 0 52px 10px rgba(210, 80, 120, 0.07);
         }
         25% {
           box-shadow:
             0 28px 56px rgba(140, 35, 60, 0.14),
-            0 0 18px 3px rgba(200, 80, 106, 0.4),
-            0 0 40px 8px rgba(200, 80, 106, 0.22),
-            0 0 75px 15px rgba(200, 80, 106, 0.11);
+            0 0 18px 3px rgba(210, 80, 120, 0.4),
+            0 0 40px 8px rgba(210, 80, 120, 0.22),
+            0 0 75px 15px rgba(210, 80, 120, 0.11);
         }
         50% {
           box-shadow:
             0 28px 56px rgba(140, 35, 60, 0.14),
-            0 0 10px 2px rgba(139, 96, 204, 0.26),
-            0 0 26px 5px rgba(139, 96, 204, 0.14),
-            0 0 52px 10px rgba(139, 96, 204, 0.07);
+            0 0 10px 2px rgba(210, 80, 120, 0.26),
+            0 0 26px 5px rgba(210, 80, 120, 0.14),
+            0 0 52px 10px rgba(210, 80, 120, 0.07);
         }
         75% {
           box-shadow:
             0 28px 56px rgba(140, 35, 60, 0.14),
-            0 0 18px 3px rgba(139, 96, 204, 0.4),
-            0 0 40px 8px rgba(139, 96, 204, 0.22),
-            0 0 75px 15px rgba(139, 96, 204, 0.11);
+            0 0 18px 3px rgba(210, 80, 120, 0.4),
+            0 0 40px 8px rgba(210, 80, 120, 0.22),
+            0 0 75px 15px rgba(210, 80, 120, 0.11);
         }
         100% {
           box-shadow:
             0 28px 56px rgba(140, 35, 60, 0.14),
-            0 0 10px 2px rgba(200, 80, 106, 0.26),
-            0 0 26px 5px rgba(200, 80, 106, 0.14),
-            0 0 52px 10px rgba(200, 80, 106, 0.07);
+            0 0 10px 2px rgba(210, 80, 120, 0.26),
+            0 0 26px 5px rgba(210, 80, 120, 0.14),
+            0 0 52px 10px rgba(210, 80, 120, 0.07);
         }
       }
 
@@ -313,12 +344,20 @@
         padding: 32px 26px 28px;
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
-        animation: neonColorCycle 6s ease-in-out infinite;
+        box-shadow:
+          0 28px 56px rgba(0, 0, 0, 0.5),
+          0 0 32px 7px rgba(210, 80, 120, 0.032),
+          0 0 72px 15px rgba(210, 80, 120, 0.016),
+          0 0 120px 24px rgba(210, 80, 120, 0.008);
       }
       /* Когда мастер выбран — пульс в цвете мастера */
       body.theme-nails .card,
       body.theme-lash .card {
-        animation: neonPulse 3.5s ease-in-out infinite;
+        box-shadow:
+          0 28px 56px rgba(0, 0, 0, 0.5),
+          0 0 32px 7px rgba(210, 80, 120, 0.032),
+          0 0 72px 15px rgba(210, 80, 120, 0.016),
+          0 0 120px 24px rgba(210, 80, 120, 0.008);
       }
 
       /* Selection screen */
@@ -1063,7 +1102,14 @@
       body.day-mode.theme-default .o3 {
         background: radial-gradient(
           circle,
-          rgba(235, 145, 165, 0.52) 0%,
+          rgba(218, 92, 135, 0.68) 0%,
+          transparent 70%
+        );
+      }
+      body.day-mode.theme-default .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(218, 92, 135, 0.68) 0%,
           transparent 70%
         );
       }
@@ -1088,7 +1134,14 @@
       body.day-mode.theme-nails .o3 {
         background: radial-gradient(
           circle,
-          rgba(238, 138, 155, 0.6) 0%,
+          rgba(214, 72, 108, 0.75) 0%,
+          transparent 70%
+        );
+      }
+      body.day-mode.theme-nails .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(214, 72, 108, 0.75) 0%,
           transparent 70%
         );
       }
@@ -1113,7 +1166,14 @@
       body.day-mode.theme-lash .o3 {
         background: radial-gradient(
           circle,
-          rgba(228, 145, 210, 0.58) 0%,
+          rgba(180, 85, 195, 0.72) 0%,
+          transparent 70%
+        );
+      }
+      body.day-mode.theme-lash .o4 {
+        background: radial-gradient(
+          circle,
+          rgba(180, 85, 195, 0.72) 0%,
           transparent 70%
         );
       }
@@ -1123,11 +1183,19 @@
         border-color: rgba(200, 95, 115, 0.28);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        animation: neonColorCycleDay 6s ease-in-out infinite;
+        box-shadow:
+          0 28px 56px rgba(0, 0, 0, 0.5),
+          0 0 32px 7px rgba(210, 80, 120, 0.032),
+          0 0 72px 15px rgba(210, 80, 120, 0.016),
+          0 0 120px 24px rgba(210, 80, 120, 0.008);
       }
       body.day-mode.theme-nails .card,
       body.day-mode.theme-lash .card {
-        animation: neonPulseDay 3.5s ease-in-out infinite;
+        box-shadow:
+          0 28px 56px rgba(0, 0, 0, 0.5),
+          0 0 32px 7px rgba(210, 80, 120, 0.032),
+          0 0 72px 15px rgba(210, 80, 120, 0.016),
+          0 0 120px 24px rgba(210, 80, 120, 0.008);
       }
       body.day-mode .studio-title {
         color: rgba(80, 25, 45, 0.45);
@@ -1335,7 +1403,7 @@
         height: 24px;
         min-width: 24px;
         border-radius: 7px;
-        border: 2px solid rgba(200, 80, 106, 0.7);
+        border: 2px solid rgba(210, 80, 120, 0.7);
         background: rgba(255, 255, 255, 0.07);
         display: flex;
         align-items: center;
@@ -1530,6 +1598,7 @@
     <div class="orb o1"></div>
     <div class="orb o2"></div>
     <div class="orb o3"></div>
+    <div class="orb o4"></div>
 
     <!-- ═══ THEME TOGGLE ══════════════════════════════════════ -->
 
